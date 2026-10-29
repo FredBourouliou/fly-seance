@@ -10,12 +10,18 @@ const READOUTS = [
   { id: "DN1", moves: "antennal grooming", voice: "groom" },
   { id: "DN2", moves: "antennal grooming", voice: "groom" },
 ];
+// Each offering is a thing the medium sets down, and a sense the fly receives it with.
 const GIFTS = [
-  { kind: "nectar", label: "Nectar", neurons: "sugar receptors" },
-  { kind: "bitter", label: "Bitter herb", neurons: "bitter receptors" },
-  { kind: "touch", label: "Touch", neurons: "antennal mechanoreceptors" },
-  { kind: "breath", label: "Breath", neurons: "JON-F antennal neurons" },
+  { kind: "nectar", thing: "a grain of sugar", label: "Sugar", sense: "tasted by its mouth",
+    neurons: "sugar receptors", watch: "mouth" },
+  { kind: "bitter", thing: "a sprig of wormwood", label: "Wormwood", sense: "tasted, and bitter",
+    neurons: "bitter receptors", watch: "mouth" },
+  { kind: "touch", thing: "a feather against its antenna", label: "Feather", sense: "felt on its antenna",
+    neurons: "antennal touch neurons", watch: "front legs" },
+  { kind: "breath", thing: "a breath of candle smoke", label: "Smoke", sense: "stirs its antenna",
+    neurons: "JON-F antennal neurons", watch: "front legs" },
 ];
+const SVG = "http://www.w3.org/2000/svg";
 const VOICE_MARK = { feed: "F", groom: "G", still: "·" };
 const VOICE_WORD = { feed: "fed", groom: "groomed", still: "stayed still" };
 // The answer is read by code from the verdict, never by the model.
@@ -84,28 +90,65 @@ function sitting(advance) {
 
 // ---------- the offering ----------
 
+function engraving(kind) {
+  const svg = document.createElementNS(SVG, "svg");
+  svg.setAttribute("class", "engraving");
+  svg.dataset.kind = kind;
+  svg.setAttribute("aria-hidden", "true");
+  const use = document.createElementNS(SVG, "use");
+  use.setAttribute("href", `#gift-${kind}`);
+  svg.append(use);
+  return svg;
+}
+
+const listed = (items) => items.length < 2 ? items.join("")
+  : `${items.slice(0, -1).join(", ")} and ${items.at(-1)}`;
+
 function showOffering(offering) {
-  const dl = $("gifts");
-  dl.replaceChildren();
+  const given = GIFTS.filter((g) => offering.rates[g.kind] > 0);
+  const watch = [...new Set(given.map((g) => g.watch))];
+  $("offer-line").textContent = given.length
+    ? `The medium sets down ${listed(given.map((g) => g.thing))}. Watch its ${listed(watch)}.`
+    : "The medium sets down nothing. The fly is left alone.";
+
+  const list = $("gifts");
+  list.replaceChildren();
   for (const g of GIFTS) {
     const hz = offering.rates[g.kind];
-    const wrap = document.createElement("div");
-    wrap.className = "gift";
-    wrap.dataset.kind = g.kind;
-    const dt = document.createElement("dt");
-    dt.textContent = g.label;
-    const dd = document.createElement("dd");
-    dd.textContent = hz > 0 ? `${hz} Hz on the ${g.neurons}` : "not offered";
+    const li = document.createElement("li");
+    li.className = "gift";
+    li.dataset.kind = g.kind;
+    const name = document.createElement("p");
+    name.className = "gift-name";
+    name.textContent = g.label;
+    const sense = document.createElement("p");
+    sense.className = "gift-sense";
+    sense.textContent = hz > 0 ? g.sense : "not offered";
     const bar = document.createElement("div");
     bar.className = "gift-bar";
     bar.append(document.createElement("i"));
-    wrap.append(dt, bar, dd);
-    dl.append(wrap);
+    const dose = document.createElement("p");
+    dose.className = "gift-dose";
+    dose.textContent = hz > 0 ? `${hz} Hz · ${g.neurons}` : "";
+    li.append(engraving(g.kind), name, sense, bar, dose);
+    list.append(li);
     requestAnimationFrame(() => {
-      if (hz > 0) wrap.classList.add("is-given");
+      if (hz > 0) li.classList.add("is-given");
       bar.firstChild.style.transform = `scaleX(${hz / 250})`;
     });
   }
+
+  // The same things, laid on the table beside the fly's head.
+  const laid = $("laid");
+  laid.replaceChildren(...given.map((g) => {
+    const e = engraving(g.kind);
+    if (g.watch === "front legs") e.classList.add("is-raised");
+    return e;
+  }));
+  laid.hidden = given.length === 0;
+  laid.classList.remove("is-shown");
+  requestAnimationFrame(() => laid.classList.add("is-shown"));
+
   $("veil").hidden = !offering.veil;
   veiled = offering.veil;
   $("why").textContent = offering.why ? `The medium heard: ${offering.why}` : "";
@@ -284,6 +327,7 @@ function ask(question) {
   $("answer-block").hidden = true;
   $("refusal").hidden = true;
   $("offering").hidden = true;
+  $("laid").hidden = true;
   const quote = $("question-quote");
   quote.textContent = question;
   quote.hidden = false;
