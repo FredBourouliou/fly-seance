@@ -18,6 +18,8 @@ const GIFTS = [
 ];
 const VOICE_MARK = { feed: "F", groom: "G", still: "·" };
 const VOICE_WORD = { feed: "fed", groom: "groomed", still: "stayed still" };
+// The answer is read by code from the verdict, never by the model.
+const ANSWER = { feed: "Yes.", still: "No.", groom: "It will not say." };
 const METER_MAX_HZ = 120;
 const K = 5;
 
@@ -252,6 +254,7 @@ function ask(question) {
   $("failure").hidden = true;
   $("voice").textContent = "";
   delete $("voice").dataset.voice;
+  $("answer").hidden = true;
   $("offering").hidden = true;
   const quote = $("question-quote");
   quote.textContent = question;
@@ -276,6 +279,10 @@ function ask(question) {
   on("voice", (v) => {
     const el = $("voice");
     el.dataset.voice = verdictVoice;
+    const answer = $("answer");
+    answer.textContent = ANSWER[verdictVoice];
+    answer.dataset.voice = verdictVoice;
+    answer.hidden = false;
     el.textContent = v.text || "The medium is silent, but the body has answered.";
     $("plain").textContent = v.plain;
   });

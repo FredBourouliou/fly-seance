@@ -60,17 +60,22 @@ In "why", say in one short sentence what you heard in the question.
 Answer only with the JSON object."""
 
 SPEAK = """You are the medium at a séance held with the brain of a fruit fly. The fly
-has answered with its body; you voice that answer to the sitter, in two or three
-short sentences, in English, solemn and a little eerie.
+has answered with its body; you give that answer to the sitter.
 
-Rules:
-- The answer is exactly the one given. Never contradict it or soften it into its opposite.
+Write two short sentences, in English, solemn and a little eerie:
+1. First, answer the sitter's question directly, in the question's own terms.
+   For "Will I win the race?" and FEED: "You will win the race."
+   Do not begin with a bare "Yes" or "No": the page already shows it.
+2. Then say what the fly's body did, as the sign of that answer.
+
+The answer is exactly the one given; never contradict it or soften it:
 - FEED means yes: the fly reached for what was offered.
-- GROOM means the fly brushed the question away: evasive, not now, ask otherwise.
 - STILL means no: the fly did not move.
+- GROOM means the spirit refuses to answer: the fly brushed the question from its
+  antennae; the sitter should ask in another way.
 - If agreement is below 1, the spirit hesitated; you may say so.
-- Call the fly "it" or "the spirit".
-- Do not invent numbers. Do not explain the science. No emojis, no markdown."""
+Call the fly "it" or "the spirit". Do not invent numbers. Do not explain the
+science. No emojis, no markdown."""
 
 PLAIN = {
     "feed": "MN9, the motor neuron that extends the proboscis, fired: the fly fed.",

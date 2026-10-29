@@ -127,6 +127,14 @@ main { max-width: 62rem; margin: 0 auto; padding: 0 1rem; }
 .veil::before, .veil::after { content: " ~ "; color: var(--ink-faint); }
 .why { margin: 0.75rem 0 0; font: italic 400 var(--step-0)/1.5 var(--display); color: var(--ink-faint); }
 
+.answer {
+  margin: 0 0 0.5rem;
+  font: 400 var(--step-3)/1.1 var(--display);
+  color: var(--ink-bright);
+}
+.answer[data-voice="feed"]  { color: var(--candle); }
+.answer[data-voice="groom"] { color: var(--verdigris); }
+
 .voice {
   margin: 0 auto; max-width: 34rem;
   font: 400 var(--step-1)/1.55 var(--display);
