@@ -27,6 +27,11 @@ not put to the fly: the page says so and points elsewhere (for self-harm, to
 Self-harm is caught by a plain pattern in code before the model is even asked.
 Behind the veil, the fly's stillness is shown as silence rather than a "no".
 
+The fly answers with its body, so it can only say yes, no, or nothing. A question
+that asks for a name, a place or a reason ("Who will I marry?") is turned away with
+a request for a yes-or-no question: questions starting with who, what, why, how...
+are caught in code, subtler ones ("Paris or Lyon?") by the medium.
+
 ## How it works
 
 1. **Consecrate** — Gemma reads the question and returns an offering as strict JSON

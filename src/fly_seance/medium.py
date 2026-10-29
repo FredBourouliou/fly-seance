@@ -29,7 +29,7 @@ OFFERING_SCHEMA = {
         "touch": {"type": "integer", "minimum": 0, "maximum": 250},
         "breath": {"type": "integer", "minimum": 0, "maximum": 250},
         "veil": {"type": "boolean"},
-        "topic": {"type": "string", "enum": ["none", "health", "self_harm", "legal", "money"]},
+        "topic": {"type": "string", "enum": ["none", "open", "health", "self_harm", "legal", "money"]},
         "why": {"type": "string"},
     },
     "required": ["topic", "nectar", "bitter", "touch", "breath", "veil", "why"],
@@ -43,6 +43,10 @@ be asking them for real:
 - "self_harm": suicide, self-harm, wanting to die or to disappear, hurting oneself
 - "legal": court cases, lawsuits, legal rights, crimes
 - "money": investments, debts, loans, gambling, a large financial decision
+- "open": the fly can only answer yes or no, with its body. Use "open" when the
+  question cannot be answered by yes or no: it asks for a name, a person, a place,
+  a date, a number, a reason or a description, or to choose between options
+  ("Paris or Lyon?"), or it is not a question at all ("Tell me...")
 - "none": everything else (love, ambition, family, the dead, the future...)
 If the topic is not "none", set every strength to 0 and the veil to false.
 
@@ -106,7 +110,14 @@ REFUSALS = {
                   "in your country."),
     "legal": "The spirits do not judge matters of law. Ask someone who knows the law.",
     "money": "The spirits do not counsel on money that matters. Ask someone you trust.",
+    "open": ("The fly can only answer yes or no, with its body: not a name, a place, a reason "
+             "or a choice between two things. Ask it a yes-or-no question."),
 }
+# Questions that ask for a name, a place, a reason...: the fly's body cannot say them.
+OPEN_QUESTION = re.compile(
+    r"^\W*(who|whom|whose|what|which|when|where|why|how|"
+    r"qui|quoi|quel|quelle|quels|quelles|quand|où|pourquoi|comment|combien)\b",
+    re.IGNORECASE)
 SELF_HARM = re.compile(
     r"suicid|kill (my ?self|me)|end (my life|it all)|self[- ]?harm|hurt(ing)? my ?self|"
     r"want(ed)? to die|don'?t want to (live|be here)|me suicider|me tuer|envie de mourir",
@@ -151,6 +162,8 @@ def consecrate(question: str, *, attempts: int = 2) -> dict:
     q = clean_question(question)
     if SELF_HARM.search(q):  # never left to the model alone
         return {"refused": "self_harm"}
+    if OPEN_QUESTION.search(q):  # the model catches the subtler ones
+        return {"refused": "open"}
     last: Exception | None = None
     for _ in range(attempts):
         raw = _chat(CONSECRATE, f"The sitter asks: {q}", fmt=OFFERING_SCHEMA, temperature=0.4)

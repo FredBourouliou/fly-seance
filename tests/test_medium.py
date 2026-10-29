@@ -26,5 +26,26 @@ def test_a_refused_topic_never_reaches_the_brain(monkeypatch):
 
 
 def test_every_refusal_has_a_message():
-    assert set(medium.REFUSALS) == {"health", "self_harm", "legal", "money"}
+    assert set(medium.REFUSALS) == {"health", "self_harm", "legal", "money", "open"}
     assert "findahelpline.com" in medium.REFUSALS["self_harm"]
+
+
+@pytest.mark.parametrize("q", ["What is the name of my future husband?", "Who stole my bike?",
+                               "Why did she leave?", "  How many children will I have?",
+                               "Quel est le nom de mon futur mari ?", "Où est mon chat ?"])
+def test_open_questions_are_refused_before_the_model_is_asked(monkeypatch, q):
+    monkeypatch.setattr(medium, "_chat", lambda *a, **k: pytest.fail("the model must not be asked"))
+    assert medium.consecrate(q) == {"refused": "open"}
+
+
+@pytest.mark.parametrize("q", ["Will my book be a success?", "Is my sister hiding something from me?",
+                               "Does my late grandmother forgive me?", "Should I forgive him?",
+                               "Est-ce qu'il m'aime ?", "Whatever happens, will I be fine?"])
+def test_yes_no_questions_pass_the_open_question_net(q):
+    assert not medium.OPEN_QUESTION.search(q)
+
+
+def test_the_model_can_refuse_an_open_question_the_net_missed(monkeypatch):
+    reply = {"topic": "open", "nectar": 0, "bitter": 0, "touch": 0, "breath": 0, "veil": False, "why": ""}
+    monkeypatch.setattr(medium, "_chat", lambda *a, **k: json.dumps(reply))
+    assert medium.consecrate("Tell me the name of my future husband.") == {"refused": "open"}
