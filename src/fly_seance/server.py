@@ -19,6 +19,7 @@ from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
 from fly_seance.brain import PATH_COMP, PATH_CON
+from fly_seance.drift import feel
 from fly_seance.medium import (MAX_QUESTION, REFUSALS, MediumError, consecrate, plain_line,
                                speak)
 from fly_seance.oracle import read_verdict, run_trials, trial_voice, load_thresholds
@@ -92,6 +93,26 @@ class Handler(SimpleHTTPRequestHandler):
         self.send_header("X-Content-Type-Options", "nosniff")
         super().end_headers()
 
+    def _drift(self) -> None:
+        """One idle trial; skipped while a séance holds the fly."""
+        if not (PATH_COMP.exists() and PATH_CON.exists()):
+            return self._json(HTTPStatus.SERVICE_UNAVAILABLE, {"skipped": "no connectome"})
+        if not _busy.acquire(blocking=False):
+            return self._json(HTTPStatus.CONFLICT, {"skipped": "séance under way"})
+        try:
+            result = feel()
+        finally:
+            _busy.release()
+        self._json(HTTPStatus.OK, result)
+
+    def _json(self, status: HTTPStatus, data: dict) -> None:
+        body = json.dumps(data).encode()
+        self.send_response(status)
+        self.send_header("Content-Type", "application/json")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
     def _trusted(self, api: bool) -> bool:
         """Local use only: the Host must be ours (no DNS rebinding) and, for the
         API, the request must not come from another site (no cross-site trigger)."""
@@ -107,11 +128,13 @@ class Handler(SimpleHTTPRequestHandler):
 
     def do_GET(self):
         url = urlparse(self.path)
-        api = url.path == "/api/seance"
+        api = url.path in ("/api/seance", "/api/drift")
         if not self._trusted(api):
             return self.send_error(HTTPStatus.FORBIDDEN, "Fly Séance only answers its own page.")
-        if api:
+        if url.path == "/api/seance":
             return self._seance(parse_qs(url.query).get("q", [""])[0][:MAX_QUESTION])
+        if url.path == "/api/drift":
+            return self._drift()
         return super().do_GET()
 
     def do_HEAD(self):

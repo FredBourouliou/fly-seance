@@ -12,6 +12,13 @@ Everything runs on your own machine. No cloud model, no API key.
 > body responds to the offering, computed from the wiring of an actual fly.
 > See [docs/SCIENCE.md](docs/SCIENCE.md).
 
+## Between questions
+
+The fly is never animated at random. Every 15–40 s, while no one is asking, the
+room sends the real brain one small stimulus drawn at random (a speck of sugar, a
+draught on the antenna, a bitter crumb, a breath) and the connectome alone decides
+whether the body moves. Most draws do nothing; some make it feed or groom.
+
 ## Questions the spirits refuse
 
 Someone may ask a real question. Health, self-harm, legal and money questions are

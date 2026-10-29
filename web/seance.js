@@ -22,6 +22,8 @@ const VOICE_WORD = { feed: "fed", groom: "groomed", still: "stayed still" };
 const ANSWER = { feed: "Yes.", still: "No.", groom: "It will not say." };
 const HELPLINES = "https://findahelpline.com/";
 let veiled = false;
+let busy = false;
+let lastAnswerAt = 0;
 const METER_MAX_HZ = 120;
 const K = 5;
 
@@ -257,7 +259,9 @@ function showRefusal(r) {
 
 // ---------- the ritual ----------
 
-function setBusy(busy) {
+function setBusy(value) {
+  busy = value;
+  if (!value) lastAnswerAt = performance.now();
   $("q").disabled = busy;
   $("ask-btn").disabled = busy;
   $("ask-btn").textContent = busy ? "Listening" : "Ask";
@@ -328,6 +332,38 @@ function ask(question) {
   };
 }
 
+// ---------- between questions ----------
+// The room sends the real brain a small random stimulus now and then; the
+// connectome alone decides whether the body moves. Nothing here is scripted.
+
+const DRIFT_MIN_MS = 15000, DRIFT_MAX_MS = 40000, DRIFT_HOLD_MS = 5000, AFTER_ANSWER_MS = 30000;
+const DRIFT_ACT = { feed: "It reaches for it.", groom: "It grooms its antennae.", still: "It does not stir." };
+let driftTimer = 0;
+
+function scheduleDrift() {
+  clearTimeout(driftTimer);
+  driftTimer = setTimeout(drift, DRIFT_MIN_MS + Math.random() * (DRIFT_MAX_MS - DRIFT_MIN_MS));
+}
+
+async function drift() {
+  const quiet = !busy && !document.hidden && performance.now() - lastAnswerAt > AFTER_ANSWER_MS;
+  if (!quiet) return scheduleDrift();
+  try {
+    const res = await fetch("/api/drift");
+    if (!res.ok || busy) return scheduleDrift();
+    const d = await res.json();
+    const caption = $("drift");
+    caption.textContent = `${d.what} (${d.stimulus}, ${d.rate_hz} Hz). ${DRIFT_ACT[d.voice]}`;
+    caption.classList.add("is-shown");
+    setDrive(driveFrom(d.rates_hz));
+    setTimeout(() => {
+      caption.classList.remove("is-shown");
+      if (!busy && performance.now() - lastAnswerAt > AFTER_ANSWER_MS) setDrive({ feed: 0, groom: 0 });
+    }, DRIFT_HOLD_MS);
+  } catch { /* server away: try again later */ }
+  scheduleDrift();
+}
+
 // ---------- wiring ----------
 
 $("ask").addEventListener("submit", (e) => { e.preventDefault(); ask($("q").value); });
@@ -338,3 +374,5 @@ addEventListener("resize", () => { if (received.length) drawRaster(received[rece
 
 sitting(false);
 wakeFly();
+lastAnswerAt = -AFTER_ANSWER_MS;
+scheduleDrift();
