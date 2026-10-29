@@ -50,6 +50,14 @@ the offering, computed from the wiring of an actual fly. The write-up says so.
 | nectar | 21 labellar sugar GRNs, right hemisphere | Fig. 1, 3 |
 | bitter herb | 21 labellar bitter GRNs | Fig. 3 (suppresses sugar → MN9) |
 | touch on the antenna | 70 Johnston's organ CE neurons (JON-CE) | Fig. 5 (antennal grooming) |
+| breath on the antenna | 60 Johnston's organ F neurons (JON-F) | Fig. 5g (no grooming on its own) |
+
+**The veil.** The medium may lift the veil for questions about the dead or the
+unspoken. Lifting it silences three inhibitory neurons (every synapse to and from
+them set to zero), as in Shiu et al. 2024, Fig. 5g: a breath that the fly ignores
+then drives antennal grooming. Measured here: breath 150 Hz alone, aBN1 0–2 Hz;
+with the veil, aBN1 42 Hz, DN1 14 Hz, DN2 15 Hz. The veil leaves feeding and the
+JON-CE touch unchanged.
 
 Each offering has its own rate (0–250 Hz); 0 means "not offered".
 
@@ -62,10 +70,11 @@ Each offering has its own rate (0–250 Hz); 0 means "not offered".
 | STILL | neither above threshold | silence — "no" |
 
 Thresholds come from a calibration grid (`scripts/calibrate.py`: each offering alone at
-10–250 Hz, and six mixtures, 3 seeds each, 72 trials). The model has no spontaneous
-activity, and each voice's rates fall into two bands with an empty band between them:
-feed 6 → 15 Hz, groom 3 → 23 Hz. Each threshold is the middle of that band (10.5 Hz and
-13 Hz); any value inside it gives the same verdict on all 72 trials. Groom is the
+10–250 Hz, the breath behind the veil at the same rates, and nine mixtures, 3 seeds
+each, 99 trials). The model has no spontaneous activity, and each voice's rates fall
+into two bands with an empty band between them: feed 6 → 15 Hz, groom 8 → 19 Hz. Each
+threshold is the middle of that band (10.5 Hz and 13.5 Hz); any value inside it gives
+the same verdict on all 99 trials. Groom is the
 strongest of aBN1, DN1 and DN2. When both voices cross their thresholds, the one
 furthest above its own threshold speaks; over k trials the majority voice wins, and a
 tie is stillness.

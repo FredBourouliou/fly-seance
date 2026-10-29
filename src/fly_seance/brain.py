@@ -51,12 +51,15 @@ class Trial:
     raster_rows: list[str] = field(default_factory=list)           # row labels
 
 
-def run_trial(rates: dict[str, float], *, duration_ms: float = 1000.0,
-              seed: int | None = None, raster_extra: int = 120) -> Trial:
+def run_trial(rates: dict[str, float], *, silence: list[str] | tuple = (),
+              duration_ms: float = 1000.0, seed: int | None = None,
+              raster_extra: int = 120) -> Trial:
     """Stimulate each offering at its own rate for `duration_ms`, return the
     firing rates of the read-out neurons and a spike sample for display.
 
-    Unknown offerings raise; rates are clamped to [0, MAX_RATE_HZ]."""
+    `silence` names groups of GROUPS["silenceable"]: as in the paper, every
+    synapse to and from those neurons is set to zero.
+    Unknown offerings or groups raise; rates are clamped to [0, MAX_RATE_HZ]."""
     import numpy as np
     import pandas as pd
     from brian2 import (Network, NeuronGroup, PoissonGroup, SpikeMonitor,
@@ -67,6 +70,9 @@ def run_trial(rates: dict[str, float], *, duration_ms: float = 1000.0,
     unknown = set(rates) - set(offerings)
     if unknown:
         raise ValueError(f"unknown offering(s): {sorted(unknown)}")
+    unknown = set(silence) - set(GROUPS["silenceable"])
+    if unknown:
+        raise ValueError(f"unknown group(s) to silence: {sorted(unknown)}")
     if seed is not None:
         brian_seed(seed)
         np.random.seed(seed)
@@ -85,7 +91,12 @@ def run_trial(rates: dict[str, float], *, duration_ms: float = 1000.0,
 
     syn = Synapses(neu, neu, "w : volt", on_pre="g += w", delay=p["t_dly"], name="synapses")
     syn.connect(i=df_con["Presynaptic_Index"].values, j=df_con["Postsynaptic_Index"].values)
-    syn.w = df_con["Excitatory x Connectivity"].values * p["w_syn"]
+    weights = df_con["Excitatory x Connectivity"].values.astype(float)
+    if silence:
+        quiet = [fly2i[f] for name in silence for f in GROUPS["silenceable"][name]["ids"]]
+        cut = df_con["Presynaptic_Index"].isin(quiet).values | df_con["Postsynaptic_Index"].isin(quiet).values
+        weights[cut] = 0
+    syn.w = weights * p["w_syn"]
 
     # Stimulation. The paper uses one PoissonInput per neuron, whose rate is
     # compiled in as a constant: every new rate forced a recompilation (measured

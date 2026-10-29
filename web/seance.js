@@ -14,6 +14,7 @@ const GIFTS = [
   { kind: "nectar", label: "Nectar", neurons: "sugar receptors" },
   { kind: "bitter", label: "Bitter herb", neurons: "bitter receptors" },
   { kind: "touch", label: "Touch", neurons: "antennal mechanoreceptors" },
+  { kind: "breath", label: "Breath", neurons: "JON-F antennal neurons" },
 ];
 const VOICE_MARK = { feed: "F", groom: "G", still: "·" };
 const VOICE_WORD = { feed: "fed", groom: "groomed", still: "stayed still" };
@@ -99,6 +100,7 @@ function showOffering(offering) {
       bar.firstChild.style.transform = `scaleX(${hz / 250})`;
     });
   }
+  $("veil").hidden = !offering.veil;
   $("why").textContent = offering.why ? `The medium heard: ${offering.why}` : "";
   $("offering").hidden = false;
 }
@@ -255,6 +257,7 @@ function ask(question) {
   quote.textContent = question;
   quote.hidden = false;
   setDrive({ feed: 0, groom: 0 });
+  document.querySelector(".masthead").scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth" });
   setBusy(true);
   sitting(true);
 

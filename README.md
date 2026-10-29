@@ -1,8 +1,8 @@
 # Fly Séance
 
 **A séance with a simulated fruit-fly brain.** You ask a question. A local Gemma
-model, the medium, turns it into an offering — nectar, a bitter herb, a touch on the
-antenna. The wiring diagram of a real fly brain (the FlyWire connectome, 127,400
+model, the medium, turns it into an offering — nectar, a bitter herb, a touch or a
+breath on the antenna — and may lift the veil, silencing three inhibitory neurons. The wiring diagram of a real fly brain (the FlyWire connectome, 127,400
 neurons in the 630 release) is simulated, and the fly's body answers: it reaches for the nectar, it
 grooms the touch away, or it stays still. The medium then speaks for it.
 

@@ -27,8 +27,15 @@ SEEDS = 3
 MIN_GAP_HZ = 8
 
 
-def grid() -> list[dict[str, float]]:
-    conds = [{name: hz} for name in ("nectar", "bitter", "touch") for hz in LEVELS]
+def grid() -> list[dict]:
+    """Offerings; the key "veil": True means the veil group is silenced."""
+    conds = [{name: hz} for name in ("nectar", "bitter", "touch", "breath") for hz in LEVELS]
+    conds += [{"breath": hz, "veil": True} for hz in LEVELS]
+    conds += [
+        {"touch": 150, "veil": True},
+        {"nectar": 150, "veil": True},
+        {"nectar": 150, "breath": 150, "veil": True},
+    ]
     conds += [
         {"nectar": 150, "bitter": 150},
         {"nectar": 150, "bitter": 50},
@@ -44,7 +51,9 @@ def run() -> None:
     rows = []
     t0 = time.time()
     for cond in grid():
-        trials = run_trials(cond, SEEDS, workers=SEEDS)
+        rates = {k: v for k, v in cond.items() if k != "veil"}
+        silence = ["veil"] if cond.get("veil") else []
+        trials = run_trials(rates, SEEDS, silence=silence, workers=SEEDS)
         for seed, t in enumerate(trials, 1):
             rows.append({"offering": cond, "seed": seed, "rates_hz": t["rates_hz"],
                          "n_active": t["n_active"]})

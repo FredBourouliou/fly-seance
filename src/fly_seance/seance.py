@@ -19,7 +19,8 @@ def hold(question: str, k: int = TRIALS, on_trial=None) -> dict:
     t0 = time.time()
     offering = consecrate(question)
     t1 = time.time()
-    trials = run_trials(offering["rates"], k, on_trial=on_trial)
+    silence = ["veil"] if offering["veil"] else []
+    trials = run_trials(offering["rates"], k, silence=silence, on_trial=on_trial)
     t2 = time.time()
     verdict = read_verdict(trials)
     voice = speak(question, offering, verdict)
@@ -29,7 +30,7 @@ def hold(question: str, k: int = TRIALS, on_trial=None) -> dict:
         "offering": offering,
         "verdict": verdict.to_dict(),
         "voice": voice,
-        "plain": plain_line(verdict),
+        "plain": plain_line(verdict, offering),
         "seconds": {"consecrate": round(t1 - t0, 1), "channel": round(t2 - t1, 1),
                     "speak": round(t3 - t2, 1)},
         "trials": trials,

@@ -49,18 +49,18 @@ def validate_offering(raw: object) -> dict[str, float]:
     return rates
 
 
-def run_trial(rates: dict[str, float], seed: int, *, duration_ms: float = 1000.0,
-              timeout: float = 300.0) -> dict:
+def run_trial(rates: dict[str, float], seed: int, *, silence: list[str] | tuple = (),
+              duration_ms: float = 1000.0, timeout: float = 300.0) -> dict:
     """One trial in a fresh worker process (see worker.py for why)."""
-    req = {"rates": rates, "seed": seed, "duration_ms": duration_ms}
+    req = {"rates": rates, "seed": seed, "silence": list(silence), "duration_ms": duration_ms}
     out = subprocess.run([sys.executable, "-m", "fly_seance.worker"],
                          input=json.dumps(req), capture_output=True, text=True,
                          check=True, timeout=timeout)
     return json.loads(out.stdout)
 
 
-def run_trials(rates: dict[str, float], k: int, *, seed0: int = 1,
-               workers: int | None = None,
+def run_trials(rates: dict[str, float], k: int, *, silence: list[str] | tuple = (),
+               seed0: int = 1, workers: int | None = None,
                on_trial: Callable[[int, dict], None] | None = None) -> list[dict]:
     """k trials with seeds seed0..seed0+k-1, in parallel; results in seed order.
     `on_trial(i, trial)` is called as each trial finishes (for live display)."""
@@ -68,7 +68,7 @@ def run_trials(rates: dict[str, float], k: int, *, seed0: int = 1,
     results: list[dict | None] = [None] * k
 
     def one(i: int) -> None:
-        results[i] = run_trial(rates, seed0 + i)
+        results[i] = run_trial(rates, seed0 + i, silence=silence)
         if on_trial:
             on_trial(i, results[i])
 

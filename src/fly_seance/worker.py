@@ -18,8 +18,8 @@ from fly_seance.brain import run_trial
 
 def main() -> None:
     req = json.load(sys.stdin)
-    trial = run_trial(req["rates"], duration_ms=float(req.get("duration_ms", 1000)),
-                      seed=req.get("seed"))
+    trial = run_trial(req["rates"], silence=req.get("silence", ()),
+                      duration_ms=float(req.get("duration_ms", 1000)), seed=req.get("seed"))
     json.dump(asdict(trial), sys.stdout)
 
 

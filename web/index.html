@@ -8,6 +8,7 @@
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="fonts/fonts.css">
 <link rel="stylesheet" href="style.css">
+<script type="importmap">{"imports":{"three":"/vendor/three.module.min.js"}}</script>
 <script type="module" src="seance.js"></script>
 </head>
 <body>
@@ -29,11 +30,26 @@
     <div class="offering" id="offering" hidden>
       <h2 class="label">Offering</h2>
       <dl class="gifts" id="gifts"></dl>
+      <p class="veil" id="veil" hidden>The veil is lifted: three inhibitory neurons are silenced.</p>
       <p class="why" id="why"></p>
     </div>
 
     <p class="voice" id="voice" aria-live="polite"></p>
   </section>
+
+  <form class="ask" id="ask" autocomplete="off">
+    <label for="q" class="label">Ask the fly</label>
+    <div class="ask-row">
+      <input id="q" name="q" type="text" maxlength="300" placeholder="Will my book be a success?" spellcheck="true">
+      <button type="submit" id="ask-btn">Ask</button>
+    </div>
+    <p class="examples" id="examples">
+      <button type="button" class="example">Will my book be a success?</button>
+      <button type="button" class="example">What is my sister hiding from me?</button>
+      <button type="button" class="example">Does my late grandmother forgive me?</button>
+    </p>
+    <p class="failure" id="failure" role="alert" hidden></p>
+  </form>
 
   <section class="proof" aria-labelledby="proof-title">
     <h2 class="label" id="proof-title">What the brain did</h2>
@@ -60,19 +76,6 @@
     </div>
   </section>
 
-  <form class="ask" id="ask" autocomplete="off">
-    <label for="q" class="label">Ask the fly</label>
-    <div class="ask-row">
-      <input id="q" name="q" type="text" maxlength="300" placeholder="Will my book be a success?" spellcheck="true">
-      <button type="submit" id="ask-btn">Ask</button>
-    </div>
-    <p class="examples" id="examples">
-      <button type="button" class="example">Will my book be a success?</button>
-      <button type="button" class="example">What is my sister hiding from me?</button>
-      <button type="button" class="example">Should I forgive him?</button>
-    </p>
-    <p class="failure" id="failure" role="alert" hidden></p>
-  </form>
 </main>
 
 <footer class="credits">

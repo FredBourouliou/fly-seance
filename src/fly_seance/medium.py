@@ -26,14 +26,16 @@ OFFERING_SCHEMA = {
         "nectar": {"type": "integer", "minimum": 0, "maximum": 250},
         "bitter": {"type": "integer", "minimum": 0, "maximum": 250},
         "touch": {"type": "integer", "minimum": 0, "maximum": 250},
+        "breath": {"type": "integer", "minimum": 0, "maximum": 250},
+        "veil": {"type": "boolean"},
         "why": {"type": "string"},
     },
-    "required": ["nectar", "bitter", "touch", "why"],
+    "required": ["nectar", "bitter", "touch", "breath", "veil", "why"],
 }
 
 CONSECRATE = """You are the medium at a séance held with the brain of a fruit fly.
 The fly cannot understand words. You translate the sitter's question into an
-offering placed before the fly. Three things can be offered, each with a strength
+offering placed before the fly. Four things can be offered, each with a strength
 from 0 (not offered) to 250:
 
 - nectar: sweetness, hope, desire, something wished for
@@ -41,10 +43,18 @@ from 0 (not offered) to 250:
 - touch: a touch on the antenna. Use it when the question pries, intrudes or
   presses: asking about someone else's secrets, being watched, nagging worries,
   impatience, a question asked again and again
+- breath: a soft breath on the antenna. Use it for questions whispered rather
+  than asked: tender, shy, half-said, about the unspoken or the departed
+
+You may also lift the veil ("veil": true) when the question reaches for what is
+hidden from the living: the dead, the forbidden, what was never said. What passes
+through a lifted veil is a breath: whenever you lift it, offer a breath of 100-250,
+alongside whatever else the question holds. Lift it rarely; most questions keep
+the veil down.
 
 First decide which feeling dominates the question and give it the strongest
 offering (100-250). Add a second one only if it is truly present, and keep it
-weaker. Most questions need one or two offerings, not three.
+weaker. Most questions need one or two offerings, not four.
 In "why", say in one short sentence what you heard in the question.
 
 Answer only with the JSON object."""
@@ -64,7 +74,7 @@ Rules:
 
 PLAIN = {
     "feed": "MN9, the motor neuron that extends the proboscis, fired: the fly fed.",
-    "groom": "The antennal grooming neurons fired: the fly groomed the touch away.",
+    "groom": "The antennal grooming neurons fired: the fly groomed its antennae.",
     "still": "Neither the feeding nor the grooming neurons crossed their threshold: the fly stayed still.",
 }
 
@@ -110,7 +120,10 @@ def consecrate(question: str, *, attempts: int = 2) -> dict:
         try:
             data = json.loads(raw)
             why = " ".join(str(data.pop("why", "")).split())[:200]
-            return {"rates": validate_offering(data), "why": why}
+            veil = data.pop("veil", False)
+            if not isinstance(veil, bool):
+                raise OfferingError("veil must be true or false")
+            return {"rates": validate_offering(data), "veil": veil, "why": why}
         except (ValueError, OfferingError, AttributeError) as e:
             last = e
     raise MediumError(f"the medium gave no usable offering: {last}")
@@ -119,18 +132,32 @@ def consecrate(question: str, *, attempts: int = 2) -> dict:
 def speak(question: str, offering: dict, verdict: Verdict) -> str:
     """The verdict, voiced. Only the verdict, its agreement and the offering are given."""
     rates = ", ".join(f"{k} {v:g}" for k, v in offering["rates"].items() if v)
+    veil = " (the veil was lifted)" if offering.get("veil") else ""
     user = (f"Question: {clean_question(question)}\n"
-            f"Offering: {rates}\n"
+            f"Offering: {rates}{veil}\n"
             f"Answer: {verdict.voice.upper()} "
             f"(agreement {verdict.votes[verdict.voice]} of {verdict.k} trials)")
     text = _chat(SPEAK, user, temperature=0.9)
     return " ".join(text.split())[:600]
 
 
-def plain_line(verdict: Verdict) -> str:
+VEIL_LINE = ("The veil was lifted: three inhibitory neurons that hold back antennal grooming "
+             "were silenced (every synapse to and from them set to zero, as in Shiu et al. 2024, Fig. 5g). ")
+
+
+def plain_line(verdict: Verdict, offering: dict | None = None) -> str:
     """What actually happened, written by code."""
     r = verdict.mean_rates_hz
-    return (f"{PLAIN[verdict.voice]} Mean over {verdict.k} trials: MN9 {r['MN9']:g} Hz, "
+    veil = VEIL_LINE if offering and offering.get("veil") else ""
+    th = verdict.thresholds_hz
+    feed_over = r["MN9"] >= th["feed"]
+    groom_over = max(r["aBN1"], r["DN1"], r["DN2"]) >= th["groom"]
+    also = ""
+    if verdict.voice == "groom" and feed_over:
+        also = " MN9 crossed its threshold too: the fly also reached with its proboscis, less strongly."
+    elif verdict.voice == "feed" and groom_over:
+        also = " The grooming neurons crossed their threshold too: the fly also groomed, less strongly."
+    return (f"{veil}{PLAIN[verdict.voice]}{also} Mean over {verdict.k} trials: MN9 {r['MN9']:g} Hz, "
             f"aBN1 {r['aBN1']:g} Hz, DN1 {r['DN1']:g} Hz, DN2 {r['DN2']:g} Hz "
             f"(thresholds: feed {verdict.thresholds_hz['feed']:g} Hz, "
             f"groom {verdict.thresholds_hz['groom']:g} Hz).")

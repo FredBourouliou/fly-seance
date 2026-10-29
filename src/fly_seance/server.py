@@ -63,14 +63,15 @@ def ritual(question: str, emit) -> None:
                        "n_active": t["n_active"], "raster_rows": t["raster_rows"],
                        "raster": thin_raster(t["raster_rows"], t["raster"])})
 
-    trials = run_trials(offering["rates"], TRIALS, on_trial=on_trial)
+    trials = run_trials(offering["rates"], TRIALS, silence=["veil"] if offering["veil"] else [],
+                        on_trial=on_trial)
     verdict = read_verdict(trials, thresholds)
     emit("verdict", verdict.to_dict())
     try:
         voice = speak(question, offering, verdict)
     except MediumError:
         voice = ""
-    emit("voice", {"text": voice, "plain": plain_line(verdict)})
+    emit("voice", {"text": voice, "plain": plain_line(verdict, offering)})
     emit("done", {})
 
 

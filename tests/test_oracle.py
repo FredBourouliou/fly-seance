@@ -13,7 +13,7 @@ def t(mn9=0.0, abn1=0.0, dn1=0.0, dn2=0.0):
 
 def test_offering_is_completed_and_clamped():
     assert validate_offering({"nectar": 400, "touch": -5}) == {
-        "nectar": 250.0, "bitter": 0.0, "touch": 0.0}
+        "nectar": 250.0, "bitter": 0.0, "touch": 0.0, "breath": 0.0}
 
 
 @pytest.mark.parametrize("raw", [
