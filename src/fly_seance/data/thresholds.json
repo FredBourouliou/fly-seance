@@ -1,0 +1,15 @@
+{
+ "_source": "scripts/calibrate.py on 117 trials; midpoint of the first empty band >= 8 Hz",
+ "bands_hz": {
+  "feed": [
+   6.0,
+   15.0
+  ],
+  "groom": [
+   8.0,
+   19.0
+  ]
+ },
+ "feed": 10.5,
+ "groom": 13.5
+}
