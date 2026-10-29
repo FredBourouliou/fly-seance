@@ -26,8 +26,29 @@ redistributed here. FlyWire asks users to cite:
 - Schlegel, P. et al. Whole-brain annotation and multi-connectome cell typing
   quantifies circuit stereotypy in *Drosophila*. *Nature* 634 (2024).
 
-See https://codex.flywire.ai/about_flywire for the citation guidelines.
+See https://codex.flywire.ai/about_flywire for the citation guidelines. Contributions to
+FlyWire are made available under CC BY-NC 4.0 (https://flywire.ai/tos); this project
+uses the data for non-commercial research and demonstration and does not redistribute it.
 
 ## Gemma
-The medium runs Gemma, Google's open-weight model, locally through Ollama. Gemma is
-not distributed with this project; its use is subject to Google's Gemma terms.
+The medium runs Gemma 4, Google's open-weight model, locally through Ollama. Gemma is
+not distributed with this project; Gemma 4 is released under the Apache License 2.0.
+
+## three.js
+`web/vendor/three.module.min.js` (r170) and the official addons in `web/vendor/addons/`
+(GLTFLoader, BufferGeometryUtils, RoomEnvironment) are vendored unchanged from
+https://github.com/mrdoob/three.js, MIT License, Copyright © 2010-2024 three.js authors.
+See `web/vendor/three.LICENSE`.
+
+## Fonts
+Old Standard TT and Alegreya Sans, vendored in `web/fonts/`, are under the SIL Open
+Font License 1.1 (`web/fonts/*-OFL.txt`).
+
+## The 3D fly
+The fly model is based on "Wildtype Female Drosophila Melanogaster"
+(https://sketchfab.com/3d-models/wildtype-female-drosophila-melanogaster-3ba1adba62f34fe995413ee5e9cf3c25)
+by mlykouretzos (https://sketchfab.com/mlykouretzos), licensed under CC BY 4.0
+(http://creativecommons.org/licenses/by/4.0/). Modified for Fly Séance: decimated,
+segmented, rigged, mouthparts articulated, materials changed. The rigging, the conversion
+script and the animation module in `web/fly/` were generated with OpenAI Codex.
+See `web/fly/MODEL-LICENSE.txt` and `web/fly/RIG.md`.

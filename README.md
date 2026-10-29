@@ -57,12 +57,17 @@ python -m fly_seance.server            # the séance page: http://127.0.0.1:8630
 - [x] Oracle: offering validation, parallel trials, verdict (`oracle.py`), calibrated thresholds
 - [x] Medium: Gemma via Ollama (`medium.py`), command-line séance (`seance.py`)
 - [x] Séance page: SSE ritual, live spike raster, rates against thresholds (`server.py`, `web/`)
-- [ ] The fly in 3D, driven by the read-out neurons (`web/fly/`)
+- [x] The fly in 3D, driven by the read-out neurons (`web/fly/`): the proboscis follows MN9, the forelegs
+      groom with aBN1/DN1/DN2, and nothing
+      moves unless a neuron crosses its threshold
 
 ## Credits
 
 Built on the model of Shiu et al. (2024, MIT) and the FlyWire connectome
-(Dorkenwald et al. 2024; Schlegel et al. 2024). See [NOTICE.md](NOTICE.md).
+(Dorkenwald et al. 2024; Schlegel et al. 2024). The 3D fly is based on
+["Wildtype Female Drosophila Melanogaster"](https://sketchfab.com/3d-models/wildtype-female-drosophila-melanogaster-3ba1adba62f34fe995413ee5e9cf3c25)
+by [mlykouretzos](https://sketchfab.com/mlykouretzos), CC BY 4.0, modified (decimated,
+segmented, rigged, recoloured); see [web/fly/RIG.md](web/fly/RIG.md). See [NOTICE.md](NOTICE.md).
 
 ## License
 

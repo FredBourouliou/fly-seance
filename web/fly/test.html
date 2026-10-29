@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="dark">
+<title>Fly Séance · Specimen study</title>
+<style>
+  :root { color-scheme: dark; font-family: Georgia, 'Times New Roman', serif; color: #e1d0b1; background: #100e0c; }
+  * { box-sizing: border-box; }
+  body { margin: 0; overflow: hidden; }
+  canvas { display: block; width: 100vw; height: 100dvh; }
+  header { position: absolute; top: 32px; left: 38px; pointer-events: none; }
+  .eyebrow { font: 11px/1.5 ui-monospace, monospace; letter-spacing: .18em; text-transform: uppercase; color: #b49e7a; }
+  h1 { font-size: clamp(22px, 3vw, 36px); font-weight: normal; margin: 9px 0 7px; letter-spacing: -.025em; }
+  header p { margin: 0; font-size: 14px; color: #b9a98e; }
+  form { position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); width: min(590px,calc(100% - 32px)); padding: 20px 24px 17px; border: 1px solid #65523a; background: #17130feF; box-shadow: 0 8px 40px #0005; }
+  .drives { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; }
+  label { font-size: 15px; }
+  .value { float: right; font: 12px/1.5 ui-monospace,monospace; color: #d8bf96; }
+  input[type=range] { display: block; width: 100%; margin: 12px 0 17px; accent-color: #c7a46c; cursor: pointer; }
+  .footer { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; justify-content: space-between; border-top: 1px solid #58472f; padding-top: 13px; }
+  .motion { font: 12px system-ui,sans-serif; color: #cabba4; display: flex; gap: 8px; align-items: center; }
+  input[type=checkbox] { margin: 0; accent-color: #c7a46c; }
+  input:focus-visible { outline: 2px solid #f3d4a4; outline-offset: 5px; }
+  #status { font: 11px/1.5 ui-monospace,monospace; color: #c5b292; }
+  #error { position: absolute; top: 44%; width: 100%; text-align: center; color: #f4c4a4; padding: 24px; }
+  aside { position: absolute; top: 38px; right: 38px; text-align: right; font: 10px/1.8 ui-monospace,monospace; color: #b49e7a; }
+  @media(max-width:600px) { header { top: 22px; left: 22px; } aside { display: none; } form { bottom: 16px; padding: 16px 18px; } }
+  @media(min-width:800px) {
+    header {top:18px;left:24px} h1 {font-size:22px;margin:5px 0} header p {font-size:12px}
+    aside {top:20px;right:22px}
+    form {left:auto;right:16px;bottom:18px;transform:none;width:190px;padding:14px}
+    .drives {grid-template-columns:1fr;gap:0} .footer {gap:10px} label {font-size:13px}
+    input[type=range] {margin:8px 0 14px} #status {font-size:10px}
+  }
+  @media(max-width:600px) and (max-height:600px) {
+    header {top:12px;left:16px} h1 {font-size:20px;margin:4px 0} header p {font-size:11px}
+    .eyebrow {font-size:9px} form {bottom:8px;padding:8px 12px;width:calc(100% - 20px)}
+    .drives {gap:18px} label {font-size:12px} input[type=range] {margin:5px 0 8px;height:12px}
+    .footer {padding-top:6px} .motion,#status {font-size:10px}
+  }
+</style>
+</head>
+<body>
+<canvas id="specimen" role="img" aria-label="Articulated fruit fly standing on a dark wooden séance table"></canvas>
+<header><div class="eyebrow">Fly Séance / motor study</div><h1><i>Drosophila melanogaster</i></h1><p>Wild type · adult female · 2.5 mm</p></header>
+<aside>SPECIMEN 001<br>FEED / GROOM / STILLNESS</aside>
+<p id="error" role="alert" hidden></p>
+<form aria-label="Continuous motor drives" onsubmit="return false">
+  <div class="drives">
+    <label for="feed">Feeding <output id="feed-value" class="value" for="feed">0.00</output><input id="feed" type="range" min="0" max="1" step="0.01" value="0"></label>
+    <label for="groom">Grooming <output id="groom-value" class="value" for="groom">0.00</output><input id="groom" type="range" min="0" max="1" step="0.01" value="0"></label>
+  </div>
+  <div class="footer"><label class="motion" for="reduced"><input id="reduced" type="checkbox"> Reduced motion</label><span id="status" role="status" aria-live="polite">Loading specimen…</span></div>
+</form>
+<script type="importmap">{"imports":{"three":"../vendor/three.module.min.js"}}</script>
+<script type="module">
+import { createFly } from './fly.js';
+const feed = document.querySelector('#feed'), groom = document.querySelector('#groom');
+const reduced = document.querySelector('#reduced'), status = document.querySelector('#status');
+const preference = matchMedia('(prefers-reduced-motion: reduce)');
+reduced.checked = preference.matches;
+try {
+  document.querySelector('canvas').dataset.lighting=new URLSearchParams(location.search).get('light')==='neutral'?'neutral':'candle';
+  const fly = await createFly(document.querySelector('canvas'),{reducedMotion: reduced.checked});
+  fly.setReducedMotion(reduced.checked);
+  function update() {
+    const f = +feed.value, g = +groom.value;
+    document.querySelector('#feed-value').value = f.toFixed(2); document.querySelector('#groom-value').value = g.toFixed(2);
+    fly.setDrive({feed:f,groom:g});
+    const action = !f && !g ? 'Stillness' : reduced.checked ? (f >= g ? 'Feeding pose' : 'Grooming pose') : f && g ? 'Feeding + grooming' : f ? 'Feeding' : 'Grooming';
+    status.textContent = `${action}${reduced.checked ? ' · static' : ' · live'}`;
+    document.querySelector('canvas').setAttribute('aria-label', `Wild-type fruit fly on a wooden table. ${action}.`);
+  }
+  feed.addEventListener('input',update); groom.addEventListener('input',update);
+  reduced.addEventListener('change',() => { fly.setReducedMotion(reduced.checked); update(); });
+  preference.addEventListener('change',event => { reduced.checked=event.matches; fly.setReducedMotion(event.matches); update(); });
+  window.addEventListener('pagehide', () => fly.dispose(), {once:true});
+  update();
+} catch (error) {
+  document.querySelector('#error').hidden = false;
+  document.querySelector('#error').textContent = `Could not load specimen: ${error.message}. Serve the repository with python -m http.server.`;
+  status.textContent='Load failed'; console.error(error);
+}
+</script>
+</body>
+</html>

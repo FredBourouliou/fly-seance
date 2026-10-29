@@ -1,0 +1,12 @@
+{
+  "sourceTriangles": 1006635,
+  "cleanedSourceTriangles": 1006503,
+  "weldedSourceVertices": 503816,
+  "sourceComponents": 239,
+  "triangles": 189567,
+  "glbBytes": 5373612,
+  "meshes": 45,
+  "sourceSha256": "d279842202c3d47065531b92bf59589bd9d53399808ecd1a6a8cdb702cda08c4",
+  "builder": "build_scan.py",
+  "bodyLengthMM": 2.5
+}

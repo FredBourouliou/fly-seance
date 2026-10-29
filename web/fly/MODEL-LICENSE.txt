@@ -1,0 +1,6 @@
+This work is based on "Wildtype Female Drosophila Melanogaster"
+(https://sketchfab.com/3d-models/wildtype-female-drosophila-melanogaster-3ba1adba62f34fe995413ee5e9cf3c25)
+by mlykouretzos (https://sketchfab.com/mlykouretzos), licensed under CC-BY-4.0
+(http://creativecommons.org/licenses/by/4.0/). Modified: decimated, segmented,
+rigged, mouthparts articulated, materials changed. Rigging and code generated with
+OpenAI Codex for Fly Séance.

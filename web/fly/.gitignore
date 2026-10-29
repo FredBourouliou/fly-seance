@@ -1,0 +1,16 @@
+# Keep only what runs the fly and what rebuilds or checks it; the rest is scratch
+# from the conversion (logs, renders, one-off edit scripts, Blender temp folders).
+*
+!.gitignore
+!fly.glb
+!fly.js
+!materials.js
+!rig.json
+!build_stats.json
+!test.html
+!RIG.md
+!MODEL-LICENSE.txt
+!build_scan.py
+!inspect_scan.py
+!verify.mjs
+!render_web.mjs
