@@ -1,0 +1,232 @@
+/* Fly Séance — a Victorian séance table under one candle. */
+
+:root {
+  --hue: 62;                                   /* sepia */
+  --night: oklch(15% 0.012 var(--hue));        /* the room */
+  --table: oklch(19% 0.016 var(--hue));
+  --rule: oklch(34% 0.02 var(--hue));
+  --ink-faint: oklch(62% 0.025 var(--hue));
+  --ink: oklch(84% 0.035 var(--hue));
+  --ink-bright: oklch(93% 0.03 var(--hue));
+  --candle: oklch(80% 0.13 72);                /* the only warm light; the feeding voice */
+  --verdigris: oklch(74% 0.07 175);            /* grooming voice */
+  --oxblood: oklch(62% 0.13 28);               /* bitter */
+
+  --display: "Old Standard TT", "Iowan Old Style", Georgia, serif;
+  --text: "Alegreya Sans", "Gill Sans", "Segoe UI", sans-serif;
+
+  --step--1: 0.875rem;
+  --step-0: 1.0625rem;
+  --step-1: 1.375rem;
+  --step-2: clamp(1.75rem, 1.4rem + 1.4vw, 2.25rem);
+  --step-3: clamp(2.5rem, 1.8rem + 3vw, 3.75rem);
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(ellipse 70% 55% at 50% 28%, oklch(22% 0.03 var(--hue)) 0%, transparent 70%),
+    var(--night);
+  color: var(--ink);
+  font: 400 var(--step-0)/1.6 var(--text);
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+  overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+/* ---------- masthead ---------- */
+
+.masthead {
+  display: flex; align-items: baseline; justify-content: space-between; gap: 1rem;
+  max-width: 62rem; margin: 0 auto; padding: 1.5rem 1rem 0;
+  border-bottom: 1px solid var(--rule);
+}
+.masthead h1 {
+  margin: 0 0 0.5rem;
+  font: 400 var(--step-1)/1 var(--display);
+  letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--ink-bright);
+}
+.sitting {
+  margin: 0; font: italic 400 var(--step-0)/1 var(--display); color: var(--ink-faint);
+}
+
+main { max-width: 62rem; margin: 0 auto; padding: 0 1rem; }
+
+.label {
+  margin: 0 0 0.5rem;
+  font: 500 var(--step--1)/1.2 var(--text);
+  letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+/* ---------- the stage ---------- */
+
+.stage {
+  position: relative;
+  height: min(58vh, 34rem);
+  min-height: 18rem;
+}
+#fly { display: block; width: 100%; height: 100%; }
+.stage-fallback {
+  position: absolute; inset: 0; display: grid; place-items: center; margin: 0;
+  font: italic 400 var(--step-1)/1.4 var(--display); color: var(--ink-faint); text-align: center;
+}
+
+/* ---------- the medium ---------- */
+
+.medium { max-width: 40rem; margin: 0 auto; text-align: center; min-height: 6rem; }
+
+.question {
+  margin: 0 0 1.25rem;
+  font: italic 400 var(--step-2)/1.25 var(--display);
+  color: var(--ink-bright);
+}
+.question::before { content: "“"; }
+.question::after { content: "”"; }
+
+.offering { margin: 0 0 1.25rem; }
+.gifts {
+  display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;
+  margin: 0 0 0.5rem;
+}
+.gift { display: grid; gap: 0.3rem; min-width: 6.5rem; opacity: 0.35; transition: opacity 600ms var(--ease-out); }
+.gift.is-given { opacity: 1; }
+.gift dt { font: 400 var(--step-0)/1 var(--display); color: var(--ink-bright); }
+.gift dd { margin: 0; font-size: var(--step--1); color: var(--ink-faint); }
+.gift-bar { height: 2px; background: var(--rule); position: relative; overflow: hidden; }
+.gift-bar i {
+  position: absolute; inset: 0; transform-origin: left; transform: scaleX(0);
+  transition: transform 900ms var(--ease-out);
+}
+.gift[data-kind="nectar"] .gift-bar i { background: var(--candle); }
+.gift[data-kind="bitter"] .gift-bar i { background: var(--oxblood); }
+.gift[data-kind="touch"]  .gift-bar i { background: var(--verdigris); }
+.why { margin: 0.75rem 0 0; font: italic 400 var(--step-0)/1.5 var(--display); color: var(--ink-faint); }
+
+.voice {
+  margin: 0 auto; max-width: 34rem;
+  font: 400 var(--step-1)/1.55 var(--display);
+  color: var(--ink-bright);
+  min-height: 1.5em;
+}
+.voice[data-voice="feed"]  { color: var(--candle); }
+.voice[data-voice="groom"] { color: var(--verdigris); }
+
+/* ---------- the proof ---------- */
+
+.proof {
+  margin: 2.5rem 0 0; padding: 1.5rem 0 0;
+  border-top: 1px solid var(--rule);
+}
+.proof-empty { max-width: 40rem; margin: 0; color: var(--ink-faint); }
+
+.proof-body {
+  display: grid; gap: 1.5rem 2.5rem;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  grid-template-areas: "raster trials" "raster rates" "plain plain";
+}
+.raster { grid-area: raster; margin: 0; }
+.trials { grid-area: trials; }
+.rates  { grid-area: rates; }
+.plain  { grid-area: plain; }
+
+#raster { display: block; width: 100%; height: 13rem; background: oklch(12% 0.01 var(--hue)); }
+.raster figcaption { margin-top: 0.5rem; font-size: var(--step--1); color: var(--ink-faint); }
+.key::before {
+  content: ""; display: inline-block; width: 0.6em; height: 0.6em; margin-right: 0.35em;
+  vertical-align: 0.05em;
+}
+.key-offer::before { background: var(--ink); }
+.key-read::before  { background: var(--candle); }
+.key-other::before { background: var(--ink-faint); opacity: 0.6; }
+
+.trial-list { display: flex; gap: 0.6rem; margin: 0; padding: 0; list-style: none; }
+.trial {
+  width: 2.5rem; height: 2.5rem; display: grid; place-items: center;
+  border: 1px solid var(--rule); border-radius: 50%;
+  font: 400 var(--step--1)/1 var(--text); color: var(--ink-faint);
+  transition: border-color 400ms var(--ease-out), color 400ms var(--ease-out), background-color 400ms var(--ease-out);
+}
+.trial[data-voice="feed"]  { border-color: var(--candle); color: var(--candle); }
+.trial[data-voice="groom"] { border-color: var(--verdigris); color: var(--verdigris); }
+.trial[data-voice="still"] { border-color: var(--ink-faint); color: var(--ink); }
+.trial.is-running { animation: breathe 1.6s ease-in-out infinite; }
+@keyframes breathe { 50% { border-color: var(--ink); } }
+
+.rates { width: 100%; border-collapse: collapse; font-size: var(--step--1); }
+.rates caption { text-align: left; }
+.rates th { text-align: left; font-weight: 500; color: var(--ink-faint); padding: 0 0.5rem 0.35rem 0; border-bottom: 1px solid var(--rule); }
+.rates td { padding: 0.45rem 0.5rem 0.45rem 0; border-bottom: 1px solid oklch(26% 0.015 var(--hue)); vertical-align: middle; }
+.rates .num { text-align: right; }
+.rates td.num { color: var(--ink-bright); }
+.meter { position: relative; height: 0.5rem; min-width: 5rem; background: oklch(22% 0.015 var(--hue)); }
+.meter i { position: absolute; inset: 0; background: var(--ink-faint); transform-origin: left; transition: transform 700ms var(--ease-out); }
+.meter b { position: absolute; top: -0.2rem; bottom: -0.2rem; width: 1px; background: var(--ink-bright); }
+.meter.is-over i { background: var(--candle); }
+.meter.is-over[data-voice="groom"] i { background: var(--verdigris); }
+
+.plain { margin: 0; max-width: 48rem; color: var(--ink); }
+.plain:not(:empty)::before { content: "What actually happened. "; font-weight: 700; color: var(--ink-bright); }
+
+/* ---------- asking ---------- */
+
+.ask { margin: 2.5rem auto 0; max-width: 40rem; }
+.ask-row { display: flex; gap: 0.75rem; }
+.ask input {
+  flex: 1; min-width: 0; min-height: 2.9rem; padding: 0.5rem 0.9rem;
+  background: var(--table); color: var(--ink-bright);
+  border: 1px solid var(--rule); border-radius: 2px;
+  font: italic 400 var(--step-0)/1.3 var(--display);
+}
+.ask input::placeholder { color: var(--ink-faint); opacity: 0.8; }
+.ask input:focus-visible, .ask button:focus-visible {
+  outline: 2px solid var(--candle); outline-offset: 2px;
+}
+.ask button[type="submit"] {
+  min-height: 2.9rem; padding: 0 1.4rem;
+  background: var(--candle); color: oklch(18% 0.02 var(--hue));
+  border: 0; border-radius: 2px; cursor: pointer;
+  font: 700 var(--step--1)/1 var(--text); letter-spacing: 0.14em; text-transform: uppercase;
+}
+.ask button[disabled] { opacity: 0.45; cursor: progress; }
+.examples { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; margin: 0.9rem 0 0; }
+.example {
+  min-height: 2.75rem; padding: 0; background: none; border: 0; cursor: pointer;
+  font: italic 400 var(--step-0)/1.3 var(--display); color: var(--ink-faint);
+  text-decoration: underline; text-decoration-color: var(--rule); text-underline-offset: 0.25em;
+}
+.example:hover { color: var(--ink-bright); }
+.example:focus-visible { outline: 2px solid var(--candle); outline-offset: 2px; }
+.failure { margin: 1rem 0 0; color: var(--oxblood); font-weight: 500; }
+
+/* ---------- credits ---------- */
+
+.credits {
+  max-width: 62rem; margin: 4rem auto 0; padding: 1.25rem 1rem 2.5rem;
+  border-top: 1px solid var(--rule);
+  font-size: var(--step--1); color: var(--ink-faint);
+}
+.credits p { max-width: 48rem; margin: 0 0 0.5rem; }
+
+/* ---------- small screens ---------- */
+
+@media (max-width: 46rem) {
+  .proof-body { grid-template-columns: minmax(0, 1fr); grid-template-areas: "trials" "raster" "rates" "plain"; }
+  .gifts { gap: 1.25rem; }
+  .stage { height: 46vh; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0ms !important; animation: none !important; }
+}

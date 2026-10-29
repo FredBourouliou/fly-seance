@@ -2,8 +2,8 @@
 
 **A séance with a simulated fruit-fly brain.** You ask a question. A local Gemma
 model, the medium, turns it into an offering — nectar, a bitter herb, a touch on the
-antenna. The wiring diagram of a real fly brain (the FlyWire connectome, ~139,000
-neurons) is simulated, and the fly's body answers: it reaches for the nectar, it
+antenna. The wiring diagram of a real fly brain (the FlyWire connectome, 127,400
+neurons in the 630 release) is simulated, and the fly's body answers: it reaches for the nectar, it
 grooms the touch away, or it stays still. The medium then speaks for it.
 
 Everything runs on your own machine. No cloud model, no API key.
@@ -32,7 +32,8 @@ Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 uv venv && uv pip install -e ".[dev]"
 python scripts/fetch_connectome.py     # ~90 MB, checksummed, into data/
 ollama pull gemma4:e4b-it-q4_K_M       # the medium
-python -m fly_seance.seance "Will my book be a success?"
+python -m fly_seance.seance "Will my book be a success?"   # one séance in the terminal
+python -m fly_seance.server            # the séance page: http://127.0.0.1:8630
 ```
 
 ## Status
@@ -40,7 +41,8 @@ python -m fly_seance.seance "Will my book be a success?"
 - [x] Connectome model with competing offerings (`brain.py`), one process per trial (`worker.py`)
 - [x] Oracle: offering validation, parallel trials, verdict (`oracle.py`), calibrated thresholds
 - [x] Medium: Gemma via Ollama (`medium.py`), command-line séance (`seance.py`)
-- [ ] Séance page with a live spike raster (`server.py`, `web/`)
+- [x] Séance page: SSE ritual, live spike raster, rates against thresholds (`server.py`, `web/`)
+- [ ] The fly in 3D, driven by the read-out neurons (`web/fly/`)
 
 ## Credits
 

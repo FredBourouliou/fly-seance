@@ -52,3 +52,12 @@ def test_majority_and_agreement():
 
 def test_a_tie_is_stillness():
     assert read_verdict([t(mn9=80), t(abn1=50)], TH).voice == "still"
+
+
+def test_raster_thinning_keeps_every_readout_spike():
+    from fly_seance.server import thin_raster
+    rows = ["offering:nectar"] * 10 + ["readout:MN9"]
+    raster = [(r, t / 1000) for r in range(10) for t in range(1000)] + [(10, t / 100) for t in range(80)]
+    thin = thin_raster(rows, raster, limit=500)
+    assert len(thin) == 500
+    assert sum(1 for r, _ in thin if r == 10) == 80

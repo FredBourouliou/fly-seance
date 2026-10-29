@@ -14,7 +14,7 @@ is the medium; the fly's real wiring diagram decides what its body would do.
         ▼
  ┌────────────────────────────┐  2. CHANNEL   leaky integrate-and-fire model of
  │ connectome simulation       │  ───────────► the whole adult fly brain
- │ (Brian 2, ~139k neurons)    │              (FlyWire wiring, Shiu et al. 2024)
+ │ (Brian 2, 127,400 neurons)    │              (FlyWire wiring, Shiu et al. 2024)
  └────────────────────────────┘              k trials × 1 s, one process per trial
         │  firing rates of read-out neurons + a spike sample for the raster
         ▼
@@ -95,7 +95,7 @@ tie is stillness.
 | `src/fly_seance/oracle.py` | offering validation, parallel trials, verdict |
 | `src/fly_seance/medium.py` | Ollama client: consecrate (JSON offering) and speak (narration) |
 | `src/fly_seance/server.py` | standard-library HTTP + SSE server for the page |
-| `web/` | the séance page |
+| `web/` | the séance page (fonts: Old Standard TT, Alegreya Sans, OFL; three.js r170, MIT — all vendored, no CDN) |
 | `scripts/fetch_connectome.py` | downloads the connectome files (not redistributed here) |
 | `scripts/calibrate.py` | calibration grid → `data/thresholds.json` |
 | `src/fly_seance/seance.py` | one séance from the command line |

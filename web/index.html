@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fly Séance</title>
+<meta name="description" content="A séance with a simulated fruit-fly brain. A local Gemma model is the medium; the FlyWire connectome answers.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="fonts/fonts.css">
+<link rel="stylesheet" href="style.css">
+<script type="module" src="seance.js"></script>
+</head>
+<body>
+<header class="masthead">
+  <h1>Fly Séance</h1>
+  <p class="sitting" id="sitting" aria-live="off">Sitting <span id="sitting-n">I</span></p>
+</header>
+
+<main>
+  <section class="stage" aria-label="The fly">
+    <canvas id="fly" aria-hidden="true"></canvas>
+    <p class="stage-fallback" id="stage-fallback" hidden></p>
+    <p class="sr-only" id="fly-state" aria-live="polite">The fly is at rest.</p>
+  </section>
+
+  <section class="medium" aria-label="The medium">
+    <blockquote class="question" id="question-quote" hidden></blockquote>
+
+    <div class="offering" id="offering" hidden>
+      <h2 class="label">Offering</h2>
+      <dl class="gifts" id="gifts"></dl>
+      <p class="why" id="why"></p>
+    </div>
+
+    <p class="voice" id="voice" aria-live="polite"></p>
+  </section>
+
+  <section class="proof" aria-labelledby="proof-title">
+    <h2 class="label" id="proof-title">What the brain did</h2>
+    <p class="proof-empty" id="proof-empty">Each séance runs the wiring of a real fly brain — 127,400 neurons from the FlyWire connectome — five times. The spikes of every trial, and the neurons that move the body, will appear here.</p>
+
+    <div class="proof-body" id="proof-body" hidden>
+      <figure class="raster">
+        <canvas id="raster" role="img" aria-label="Spike raster of the latest trial"></canvas>
+        <figcaption><span class="key key-offer">offering neurons</span> <span class="key key-read">motor read-outs</span> <span class="key key-other">other active neurons</span> · one simulated second</figcaption>
+      </figure>
+
+      <div class="trials">
+        <h3 class="label">Trials</h3>
+        <ol class="trial-list" id="trials" role="list"></ol>
+      </div>
+
+      <table class="rates">
+        <caption class="label">Mean firing rate</caption>
+        <thead><tr><th scope="col">Neuron</th><th scope="col">Moves</th><th scope="col" class="num">Hz</th><th scope="col">against threshold</th></tr></thead>
+        <tbody id="rates"></tbody>
+      </table>
+
+      <p class="plain" id="plain"></p>
+    </div>
+  </section>
+
+  <form class="ask" id="ask" autocomplete="off">
+    <label for="q" class="label">Ask the fly</label>
+    <div class="ask-row">
+      <input id="q" name="q" type="text" maxlength="300" placeholder="Will my book be a success?" spellcheck="true">
+      <button type="submit" id="ask-btn">Ask</button>
+    </div>
+    <p class="examples" id="examples">
+      <button type="button" class="example">Will my book be a success?</button>
+      <button type="button" class="example">What is my sister hiding from me?</button>
+      <button type="button" class="example">Should I forgive him?</button>
+    </p>
+    <p class="failure" id="failure" role="alert" hidden></p>
+  </form>
+</main>
+
+<footer class="credits">
+  <p>The fly does not understand your question. What is real is how its simulated body answers the offering, computed from the wiring of an actual fly.</p>
+  <p>Connectome: FlyWire (Dorkenwald et al. 2024; Schlegel et al. 2024). Brain model: Shiu et al., <i>Nature</i> 2024 (MIT). Medium: Gemma, running locally. 3D fly generated with OpenAI Codex.</p>
+</footer>
+</body>
+</html>
