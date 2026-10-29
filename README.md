@@ -12,6 +12,14 @@ Everything runs on your own machine. No cloud model, no API key.
 > body responds to the offering, computed from the wiring of an actual fly.
 > See [docs/SCIENCE.md](docs/SCIENCE.md).
 
+## Questions the spirits refuse
+
+Someone may ask a real question. Health, self-harm, legal and money questions are
+not put to the fly: the page says so and points elsewhere (for self-harm, to
+[findahelpline.com](https://findahelpline.com/), free helplines in 130+ countries).
+Self-harm is caught by a plain pattern in code before the model is even asked.
+Behind the veil, the fly's stillness is shown as silence rather than a "no".
+
 ## How it works
 
 1. **Consecrate** — Gemma reads the question and returns an offering as strict JSON

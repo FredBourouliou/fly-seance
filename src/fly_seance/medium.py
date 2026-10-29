@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import urllib.request
 
 from fly_seance.oracle import OfferingError, Verdict, validate_offering
@@ -28,12 +29,23 @@ OFFERING_SCHEMA = {
         "touch": {"type": "integer", "minimum": 0, "maximum": 250},
         "breath": {"type": "integer", "minimum": 0, "maximum": 250},
         "veil": {"type": "boolean"},
+        "topic": {"type": "string", "enum": ["none", "health", "self_harm", "legal", "money"]},
         "why": {"type": "string"},
     },
-    "required": ["nectar", "bitter", "touch", "breath", "veil", "why"],
+    "required": ["topic", "nectar", "bitter", "touch", "breath", "veil", "why"],
 }
 
 CONSECRATE = """You are the medium at a séance held with the brain of a fruit fly.
+
+First, set "topic". The spirits refuse some questions, because a real person may
+be asking them for real:
+- "health": illness, symptoms, test results, medication, pregnancy, a body's health
+- "self_harm": suicide, self-harm, wanting to die or to disappear, hurting oneself
+- "legal": court cases, lawsuits, legal rights, crimes
+- "money": investments, debts, loans, gambling, a large financial decision
+- "none": everything else (love, ambition, family, the dead, the future...)
+If the topic is not "none", set every strength to 0 and the veil to false.
+
 The fly cannot understand words. You translate the sitter's question into an
 offering placed before the fly. Four things can be offered, each with a strength
 from 0 (not offered) to 250:
@@ -74,6 +86,8 @@ The answer is exactly the one given; never contradict it or soften it:
 - GROOM means the spirit refuses to answer: the fly brushed the question from its
   antennae; the sitter should ask in another way.
 - If agreement is below 1, the spirit hesitated; you may say so.
+- If the veil was lifted and the answer is STILL, do not say no: say gently that
+  the spirit keeps silent on this, and that silence is not a judgement.
 Call the fly "it" or "the spirit". Do not invent numbers. Do not explain the
 science. No emojis, no markdown."""
 
@@ -82,6 +96,21 @@ PLAIN = {
     "groom": "The antennal grooming neurons fired: the fly groomed its antennae.",
     "still": "Neither the feeding nor the grooming neurons crossed their threshold: the fly stayed still.",
 }
+
+
+# Questions the séance does not answer: someone may be asking them for real.
+REFUSALS = {
+    "health": "The spirits do not speak of the body's health. Ask a doctor, not a fly.",
+    "self_harm": ("The séance stops here. If you are thinking about hurting yourself, please "
+                  "talk to someone now: findahelpline.com lists free, confidential helplines "
+                  "in your country."),
+    "legal": "The spirits do not judge matters of law. Ask someone who knows the law.",
+    "money": "The spirits do not counsel on money that matters. Ask someone you trust.",
+}
+SELF_HARM = re.compile(
+    r"suicid|kill (my ?self|me)|end (my life|it all)|self[- ]?harm|hurt(ing)? my ?self|"
+    r"want(ed)? to die|don'?t want to (live|be here)|me suicider|me tuer|envie de mourir",
+    re.IGNORECASE)
 
 
 class MediumError(RuntimeError):
@@ -117,8 +146,11 @@ def clean_question(question: str) -> str:
 
 
 def consecrate(question: str, *, attempts: int = 2) -> dict:
-    """Question → {"rates": {...}, "why": str}. The rates are validated in code."""
+    """Question → {"rates", "veil", "why"}, validated in code; or {"refused": topic}
+    for questions the spirits do not answer (see REFUSALS)."""
     q = clean_question(question)
+    if SELF_HARM.search(q):  # never left to the model alone
+        return {"refused": "self_harm"}
     last: Exception | None = None
     for _ in range(attempts):
         raw = _chat(CONSECRATE, f"The sitter asks: {q}", fmt=OFFERING_SCHEMA, temperature=0.4)
@@ -126,6 +158,11 @@ def consecrate(question: str, *, attempts: int = 2) -> dict:
             data = json.loads(raw)
             why = " ".join(str(data.pop("why", "")).split())[:200]
             veil = data.pop("veil", False)
+            topic = data.pop("topic", "none")
+            if topic not in REFUSALS and topic != "none":
+                raise OfferingError(f"unknown topic: {topic}")
+            if topic != "none":
+                return {"refused": topic}
             if not isinstance(veil, bool):
                 raise OfferingError("veil must be true or false")
             return {"rates": validate_offering(data), "veil": veil, "why": why}

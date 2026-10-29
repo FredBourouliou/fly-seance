@@ -19,7 +19,8 @@ from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
 from fly_seance.brain import PATH_COMP, PATH_CON
-from fly_seance.medium import MAX_QUESTION, MediumError, consecrate, plain_line, speak
+from fly_seance.medium import (MAX_QUESTION, REFUSALS, MediumError, consecrate, plain_line,
+                               speak)
 from fly_seance.oracle import read_verdict, run_trials, trial_voice, load_thresholds
 from fly_seance.seance import TRIALS
 
@@ -53,6 +54,10 @@ def ritual(question: str, emit) -> None:
         msg = ("The medium heard nothing to offer. Ask a real question."
                if kind == "silent" else "The medium is not here: start Ollama (ollama serve).")
         emit("failure", {"kind": kind, "message": msg, "detail": str(e)})
+        return
+    if "refused" in offering:
+        emit("refusal", {"topic": offering["refused"], "message": REFUSALS[offering["refused"]]})
+        emit("done", {})
         return
     emit("offering", offering)
 

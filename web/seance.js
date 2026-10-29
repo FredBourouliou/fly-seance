@@ -20,6 +20,8 @@ const VOICE_MARK = { feed: "F", groom: "G", still: "·" };
 const VOICE_WORD = { feed: "fed", groom: "groomed", still: "stayed still" };
 // The answer is read by code from the verdict, never by the model.
 const ANSWER = { feed: "Yes.", still: "No.", groom: "It will not say." };
+const HELPLINES = "https://findahelpline.com/";
+let veiled = false;
 const METER_MAX_HZ = 120;
 const K = 5;
 
@@ -103,6 +105,7 @@ function showOffering(offering) {
     });
   }
   $("veil").hidden = !offering.veil;
+  veiled = offering.veil;
   $("why").textContent = offering.why ? `The medium heard: ${offering.why}` : "";
   $("offering").hidden = false;
 }
@@ -232,6 +235,26 @@ function drawRaster(t) {
   rasterAnim = requestAnimationFrame(step);
 }
 
+// ---------- questions the spirits refuse ----------
+
+function showRefusal(r) {
+  const p = $("refusal");
+  p.replaceChildren();
+  const [before, after] = r.message.split("findahelpline.com");
+  p.append(before);
+  if (after !== undefined) {
+    const a = document.createElement("a");
+    a.href = HELPLINES;
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.textContent = "findahelpline.com";
+    p.append(a, after);
+  }
+  p.hidden = false;
+  $("proof-empty").hidden = false;
+  $("proof-body").hidden = true;
+}
+
 // ---------- the ritual ----------
 
 function setBusy(busy) {
@@ -254,7 +277,8 @@ function ask(question) {
   $("failure").hidden = true;
   $("voice").textContent = "";
   delete $("voice").dataset.voice;
-  $("answer").hidden = true;
+  $("answer-block").hidden = true;
+  $("refusal").hidden = true;
   $("offering").hidden = true;
   const quote = $("question-quote");
   quote.textContent = question;
@@ -269,6 +293,7 @@ function ask(question) {
   const on = (name, fn) => source.addEventListener(name, (e) => fn(JSON.parse(e.data)));
 
   on("offering", (o) => { showOffering(o); resetProof(); });
+  on("refusal", (r) => showRefusal(r));
   on("trial", showTrial);
   on("verdict", (v) => {
     thresholds = v.thresholds_hz;
@@ -280,9 +305,10 @@ function ask(question) {
     const el = $("voice");
     el.dataset.voice = verdictVoice;
     const answer = $("answer");
-    answer.textContent = ANSWER[verdictVoice];
+    // Behind the veil, stillness is silence rather than a no: the same verdict, said gently.
+    answer.textContent = veiled && verdictVoice === "still" ? "Silence." : ANSWER[verdictVoice];
     answer.dataset.voice = verdictVoice;
-    answer.hidden = false;
+    $("answer-block").hidden = false;
     el.textContent = v.text || "The medium is silent, but the body has answered.";
     $("plain").textContent = v.plain;
   });

@@ -9,7 +9,7 @@ import json
 import sys
 import time
 
-from fly_seance.medium import consecrate, plain_line, speak
+from fly_seance.medium import REFUSALS, consecrate, plain_line, speak
 from fly_seance.oracle import read_verdict, run_trials
 
 TRIALS = 5
@@ -18,6 +18,9 @@ TRIALS = 5
 def hold(question: str, k: int = TRIALS, on_trial=None) -> dict:
     t0 = time.time()
     offering = consecrate(question)
+    if "refused" in offering:
+        return {"question": question, "refused": offering["refused"],
+                "message": REFUSALS[offering["refused"]]}
     t1 = time.time()
     silence = ["veil"] if offering["veil"] else []
     trials = run_trials(offering["rates"], k, silence=silence, on_trial=on_trial)
