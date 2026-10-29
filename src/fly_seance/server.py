@@ -19,7 +19,7 @@ from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
 from fly_seance.brain import PATH_COMP, PATH_CON
-from fly_seance.medium import MediumError, consecrate, plain_line, speak
+from fly_seance.medium import MAX_QUESTION, MediumError, consecrate, plain_line, speak
 from fly_seance.oracle import read_verdict, run_trials, trial_voice, load_thresholds
 from fly_seance.seance import TRIALS
 
@@ -86,11 +86,32 @@ class Handler(SimpleHTTPRequestHandler):
         self.send_header("X-Content-Type-Options", "nosniff")
         super().end_headers()
 
+    def _trusted(self, api: bool) -> bool:
+        """Local use only: the Host must be ours (no DNS rebinding) and, for the
+        API, the request must not come from another site (no cross-site trigger)."""
+        if self.headers.get("Host", "") not in {f"127.0.0.1:{PORT}", f"localhost:{PORT}"}:
+            return False
+        if not api:
+            return True
+        site = self.headers.get("Sec-Fetch-Site")
+        if site is not None:
+            return site in ("same-origin", "none")
+        origin = self.headers.get("Origin")
+        return origin is None or origin in {f"http://127.0.0.1:{PORT}", f"http://localhost:{PORT}"}
+
     def do_GET(self):
         url = urlparse(self.path)
-        if url.path == "/api/seance":
-            return self._seance(parse_qs(url.query).get("q", [""])[0])
+        api = url.path == "/api/seance"
+        if not self._trusted(api):
+            return self.send_error(HTTPStatus.FORBIDDEN, "Fly Séance only answers its own page.")
+        if api:
+            return self._seance(parse_qs(url.query).get("q", [""])[0][:MAX_QUESTION])
         return super().do_GET()
+
+    def do_HEAD(self):
+        if not self._trusted(False):
+            return self.send_error(HTTPStatus.FORBIDDEN)
+        return super().do_HEAD()
 
     def _send(self, event: str, data: dict) -> None:
         payload = f"event: {event}\ndata: {json.dumps(data)}\n\n".encode()
