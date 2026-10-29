@@ -31,14 +31,15 @@ Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 ```bash
 uv venv && uv pip install -e ".[dev]"
 python scripts/fetch_connectome.py     # ~90 MB, checksummed, into data/
-ollama pull gemma4                     # the medium
+ollama pull gemma4:e4b-it-q4_K_M       # the medium
+python -m fly_seance.seance "Will my book be a success?"
 ```
 
 ## Status
 
 - [x] Connectome model with competing offerings (`brain.py`), one process per trial (`worker.py`)
-- [ ] Oracle: offering validation, parallel trials, verdict (`oracle.py`)
-- [ ] Medium: Gemma via Ollama (`medium.py`)
+- [x] Oracle: offering validation, parallel trials, verdict (`oracle.py`), calibrated thresholds
+- [x] Medium: Gemma via Ollama (`medium.py`), command-line séance (`seance.py`)
 - [ ] Séance page with a live spike raster (`server.py`, `web/`)
 
 ## Credits

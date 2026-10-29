@@ -61,7 +61,14 @@ Each offering has its own rate (0–250 Hz); 0 means "not offered".
 | GROOM | aBN1, aDN1 (DN1), aDN2 (DN2) | the spirit brushes it off — evasive |
 | STILL | neither above threshold | silence — "no" |
 
-Thresholds are calibrated from baseline runs (`scripts/calibrate.py`), not chosen by hand.
+Thresholds come from a calibration grid (`scripts/calibrate.py`: each offering alone at
+10–250 Hz, and six mixtures, 3 seeds each, 72 trials). The model has no spontaneous
+activity, and each voice's rates fall into two bands with an empty band between them:
+feed 6 → 15 Hz, groom 3 → 23 Hz. Each threshold is the middle of that band (10.5 Hz and
+13 Hz); any value inside it gives the same verdict on all 72 trials. Groom is the
+strongest of aBN1, DN1 and DN2. When both voices cross their thresholds, the one
+furthest above its own threshold speaks; over k trials the majority voice wins, and a
+tie is stillness.
 
 ## Process model
 
@@ -74,7 +81,9 @@ Thresholds are calibrated from baseline runs (`scripts/calibrate.py`), not chose
   first. Each trial therefore runs in a **fresh worker process**
   (`python -m fly_seance.worker`), and k trials run in parallel (18 cores available).
 - Measured on the dev machine (M5 Max, 48 GB): ~2.2 GB RAM per worker.
-- Gemma 4 E4B via Ollama (`localhost:11434`): ~5 s per narration.
+- Gemma 4 E4B via Ollama (`localhost:11434`), llama.cpp build `gemma4:e4b-it-q4_K_M`
+  (the MLX build has no structured output in Ollama): ~0.4 s per offering, ~0.3 s per voice.
+- A whole séance (offering, 5 parallel trials, verdict, voice): ~5 s.
 
 ## Modules
 
@@ -88,7 +97,8 @@ Thresholds are calibrated from baseline runs (`scripts/calibrate.py`), not chose
 | `src/fly_seance/server.py` | standard-library HTTP + SSE server for the page |
 | `web/` | the séance page |
 | `scripts/fetch_connectome.py` | downloads the connectome files (not redistributed here) |
-| `scripts/calibrate.py` | baseline runs → thresholds |
+| `scripts/calibrate.py` | calibration grid → `data/thresholds.json` |
+| `src/fly_seance/seance.py` | one séance from the command line |
 
 ## Data
 
