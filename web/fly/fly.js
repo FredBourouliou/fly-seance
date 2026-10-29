@@ -146,6 +146,7 @@ export async function createFly(canvas, options = {}) {
   const rostrum=asset.nodes.get('proboscis_rostrum'),mouthRest=rostrum.position.clone();
   const mouthShift=new THREE.Vector3().fromArray(rig.mouth.translation);
   const lobeRestL=lobeL.position.clone(),lobeRestR=lobeR.position.clone();
+  const MOUTH_REACH=5.5,MOUTH_DAB=.25,MOUTH_SPREAD=3,LOBE_PUMP=.006;
   // One shallow spherical cap on the table, not an attached mouth primitive.
   const mouthShadowGeometry=new THREE.PlaneGeometry(.34,.25);
   const mouthShadowMaterial=new THREE.MeshBasicMaterial({map:contactMap,transparent:true,opacity:0,depthWrite:false,toneMapped:false});
@@ -184,10 +185,13 @@ export async function createFly(canvas, options = {}) {
         j.node.rotation.z=sign*.018*g*wave;
       }
     }
-    // Actual source tissue stays at its original scale. A few microns of lateral
-    // spreading suggest pumping without manufacturing a stalk or paired pads.
-    rostrum.position.copy(mouthRest).addScaledVector(mouthShift,f);
-    const spread=(rig.mouth.spread+.0007*pump)*f;
+    // Actual source tissue stays at its original scale. The mouth reaches the
+    // table (MOUTH_REACH times the rig's shift, about 0.1 mm) and dabs it in time
+    // with the pump, so feeding reads at page size; the lobes open as it touches.
+    const dab=Math.max(0,pump)*MOUTH_DAB;
+    // While the forelegs groom, the mouth stays higher so the legs do not hide it.
+    rostrum.position.copy(mouthRest).addScaledVector(mouthShift,f*MOUTH_REACH*(1-dab)*(1-.8*g));
+    const spread=(rig.mouth.spread*MOUTH_SPREAD+LOBE_PUMP*(.5+.5*pump))*f;
     lobeL.position.copy(lobeRestL);lobeL.position.x+=spread;
     lobeR.position.copy(lobeRestR);lobeR.position.x-=spread;
     mouthShadowMaterial.opacity=.22*f;

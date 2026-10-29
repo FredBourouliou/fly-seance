@@ -99,7 +99,9 @@ for(const engine of ['chromium','webkit']){
    measurements[state]=await page.evaluate(()=>measure());bounds(measurements[state].bounds);
    if(g===1)for(const [side,d] of Object.entries(measurements[state].contacts))check(d<.055,`${engine} ${state} ${side} antenna contact ${d}`);
    const m=measurements[state];
-   if(f===1)check(m.mouth.contactGap<.015&&m.mouth.penetration>-.015,`${engine} ${state} own-mouth nectar contact ${JSON.stringify(m.mouth)}`);
+   // Feeding alone: the mouth reaches the table without going through it.
+   if(f===1&&g===0)check(m.mouth.low>-.005&&m.mouth.low<.04,`${engine} ${state} own mouth reaches the table ${JSON.stringify(m.mouth)}`);
+   check(m.mouth.low>-.005,`${engine} ${state} mouth stays above the table ${m.mouth.low}`);
    check(m.nectar.count===0,`${engine} ${state} no visible nectar drop`);
    check(m.mouth.unitScale,`${engine} ${state} original mouth scale`);
    for(const [side,a] of Object.entries(m.antennae))check(a.angle<.021&&a.scale.every(x=>x===1),`${engine} ${state} ${side} antenna keeps its size and shape`);
@@ -128,7 +130,7 @@ for(const engine of ['chromium','webkit']){
   for(const [n,y] of Object.entries(footHeights))check(Math.abs(y)<.002,`${engine} planted foot ${n}: ${y}`);
   await page.evaluate(()=>fly.setDrive({feed:1,groom:0}));await page.waitForTimeout(1400);
   const pump=[];for(let i=0;i<8;i++){pump.push((await page.evaluate(()=>measure())).mouth);await page.waitForTimeout(85)}
-  for(const m of pump)check(m.contactGap<.015&&m.penetration>-.015&&m.unitScale,`${engine} source tissue remains in nectar contact: ${JSON.stringify(m)}`);
+  for(const m of pump)check(m.low>-.005&&m.low<.06&&m.unitScale,`${engine} pumping mouth dabs the table: ${JSON.stringify(m)}`);
   check(Math.max(...pump.map(m=>m.gape))-Math.min(...pump.map(m=>m.gape))>.0008,`${engine} subtle source-mouth spreading`);
   const materials=await page.evaluate(()=>{const out={};scene.getObjectByName('fly_root').parent.traverse(o=>{if(o.isMesh)out[o.material.name]={physical:!!o.material.isMeshPhysicalMaterial,roughness:o.material.roughness,transmission:o.material.transmission,iridescence:o.material.iridescence,transparent:o.material.transparent,vertexColors:o.material.vertexColors}});return out});
   check(await page.evaluate(()=>renderer.getClearAlpha()===0),'Transparent canvas clear');

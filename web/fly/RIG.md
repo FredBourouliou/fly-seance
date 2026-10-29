@@ -95,11 +95,14 @@ the head bows 30°, the oral base deflects 5° and moves down only 0.018 mm. The
 halves of the source terminal tissue spread 0.0035 mm each, with a 0.0007 mm
 pumping variation. There is no telescoping or fabricated extended proboscis.
 
-The rig keeps a nectar point (`rig.mouth.nectar`, radius 0.155 mm, height about
-0.102 mm) as the surface the mouth reaches in the feeding pose, but the visible
-nectar drop was removed for Fly Séance: against the dark table it read as a black
-bead. The mouth therefore stops about 0.1 mm above the table, with a soft contact
-shadow beneath it. The canvas still clears to alpha zero.
+The rig keeps a nectar point (`rig.mouth.nectar`) from the conversion, but the
+visible nectar drop was removed for Fly Séance: against the dark table it read as a
+black bead. To make feeding readable at page size, `fly.js` scales the rig's mouth
+shift by `MOUTH_REACH` (5.5, about 0.1 mm) so the source mouth reaches the table,
+dabs it in time with the pump (`MOUTH_DAB`), and opens its lobes as it touches
+(`MOUTH_SPREAD`, `LOBE_PUMP`). While the forelegs groom, the reach is reduced so the
+legs do not hide the mouth. `verify.mjs` checks that the mouth reaches the table
+without going through it. The canvas still clears to alpha zero.
 
 ## Forelegs and antennae
 
@@ -160,7 +163,7 @@ distance/lens shift without changing the viewing angle.
 hierarchy and unique names, source mouth provenance, vertex colours, standard
 skins, geometry budget, official glTF validation, rest poses, clamping, ongoing
 motion, static supporting anatomy, planted feet, antenna contacts, unchanged
-antenna/mouth scale, mouth contact with the nectar point throughout pumping, no visible nectar drop,
+antenna/mouth scale, the mouth reaching the table without crossing it throughout pumping, no visible nectar drop,
 foreleg clearance from the table and convex eye volumes through a grooming cycle,
 mouth visibility, materials, transparent canvas, wide/phone framing, reduced
 motion, disposal and console errors. `verification.json` records the measurements.
