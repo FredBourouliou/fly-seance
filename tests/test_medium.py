@@ -49,3 +49,19 @@ def test_the_model_can_refuse_an_open_question_the_net_missed(monkeypatch):
     reply = {"topic": "open", "nectar": 0, "bitter": 0, "touch": 0, "breath": 0, "veil": False, "why": ""}
     monkeypatch.setattr(medium, "_chat", lambda *a, **k: json.dumps(reply))
     assert medium.consecrate("Tell me the name of my future husband.") == {"refused": "open"}
+
+
+def test_a_question_that_stirs_nothing_gets_the_touch_set_in_code(monkeypatch):
+    reply = {"topic": "none", "nectar": 0, "bitter": 0, "touch": 0, "breath": 0,
+             "veil": True, "why": "Nothing."}
+    monkeypatch.setattr(medium, "_chat", lambda *a, **k: json.dumps(reply))
+    offering = medium.consecrate("Are tabs better than spaces?")
+    assert offering["rates"]["touch"] == 150
+    assert not any(v for k, v in offering["rates"].items() if k != "touch")
+    assert offering["veil"] is False and offering["why"] == medium.IDLE_WHY
+
+
+def test_a_broken_reply_is_still_an_error(monkeypatch):
+    monkeypatch.setattr(medium, "_chat", lambda *a, **k: "not json")
+    with pytest.raises(medium.MediumError):
+        medium.consecrate("Will my book be a success?")

@@ -14,7 +14,7 @@ import os
 import re
 import urllib.request
 
-from fly_seance.oracle import OfferingError, Verdict, validate_offering
+from fly_seance.oracle import EmptyOffering, OfferingError, Verdict, validate_offering
 
 OLLAMA = os.environ.get("OLLAMA_HOST", "http://localhost:11434").rstrip("/")
 # The llama.cpp build: the MLX build of gemma4:e4b has no structured output in Ollama.
@@ -113,6 +113,10 @@ REFUSALS = {
     "open": ("The fly can only answer yes or no, with its body: not a name, a place, a reason "
              "or a choice between two things. Ask it a yes-or-no question."),
 }
+# A question that stirs nothing in the medium still gets an answer: code touches the
+# antenna and the fly brushes it off. Set here, never by the model.
+IDLE_OFFERING = {"touch": 150}
+IDLE_WHY = "The question stirred nothing in the medium, so it only touched the antenna."
 # Questions that ask for a name, a place, a reason...: the fly's body cannot say them.
 OPEN_QUESTION = re.compile(
     r"^\W*(who|whom|whose|what|which|when|where|why|how|"
@@ -181,6 +185,8 @@ def consecrate(question: str, *, attempts: int = 2) -> dict:
             return {"rates": validate_offering(data), "veil": veil, "why": why}
         except (ValueError, OfferingError, AttributeError) as e:
             last = e
+    if isinstance(last, EmptyOffering):
+        return {"rates": validate_offering(IDLE_OFFERING), "veil": False, "why": IDLE_WHY}
     raise MediumError(f"the medium gave no usable offering: {last}")
 
 

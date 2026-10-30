@@ -27,6 +27,10 @@ class OfferingError(ValueError):
     """The offering cannot be placed before the fly."""
 
 
+class EmptyOffering(OfferingError):
+    """Every rate is zero: nothing was offered."""
+
+
 def validate_offering(raw: object) -> dict[str, float]:
     """Return {offering: rate in Hz} for every known offering.
 
@@ -45,7 +49,7 @@ def validate_offering(raw: object) -> dict[str, float]:
             raise OfferingError(f"{name}: rate must be a number")
         rates[name] = min(max(float(value), 0.0), MAX_RATE_HZ)
     if not any(rates.values()):
-        raise OfferingError("the offering is empty")
+        raise EmptyOffering("the offering is empty")
     return rates
 
 
