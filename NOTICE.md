@@ -52,3 +52,8 @@ by mlykouretzos (https://sketchfab.com/mlykouretzos), licensed under CC BY 4.0
 segmented, rigged, mouthparts articulated, materials changed. The rigging, the conversion
 script and the animation module in `web/fly/` were generated with OpenAI Codex.
 See `web/fly/MODEL-LICENSE.txt` and `web/fly/RIG.md`.
+
+## AI assistance
+The project was built with Claude Code (Anthropic) and OpenAI Codex, under the author's
+direction; see "How it was built" in `README.md`. At run time the only AI is Gemma 4,
+locally.

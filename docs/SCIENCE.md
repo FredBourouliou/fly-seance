@@ -23,8 +23,15 @@
 
 ## What the séance adds
 The medium's choice of offering largely sets the outcome. What the connectome adds
-is the arbitration when offerings compete (nectar *and* bitter *and* a touch) and the
-trial-to-trial variability of Poisson input — the fly is not a switch.
+is the arbitration when offerings compete (nectar *and* bitter *and* a touch). Over 22
+recorded séances, the rule "the strongest offering wins" predicted 21 verdicts; the
+22nd was a three-way mix that only the wiring could settle.
+
+The Poisson input varies from trial to trial, but the five trials of a séance use
+fixed seeds (1 to 5), on purpose: the same offering always gives the same numbers, so
+any verdict can be audited. Those 22 séances were all unanimous, so at the rates
+Gemma chooses the trials add little beyond the ritual. Disagreement remains possible
+near a threshold, and the page shows it when it happens.
 
 ## Measured on the dev machine (FlyWire 630, 1 s simulated, single trials)
 

@@ -32,6 +32,10 @@ that asks for a name, a place or a reason ("Who will I marry?") is turned away w
 a request for a yes-or-no question: questions starting with who, what, why, how...
 are caught in code, subtler ones ("Paris or Lyon?") by the medium.
 
+Some questions stir nothing in the medium ("Are tabs better than spaces?"): Gemma
+offers nothing at all. Code then touches the antenna and the fly brushes the question
+off, which is as good an answer as any.
+
 ## How it works
 
 1. **Consecrate** — Gemma reads the question and returns an offering as strict JSON
@@ -65,6 +69,14 @@ python -m fly_seance.server            # the séance page: http://127.0.0.1:8630
 - [x] The fly in 3D, driven by the read-out neurons (`web/fly/`): the proboscis follows MN9, the forelegs
       groom with aBN1/DN1/DN2, and nothing
       moves unless a neuron crosses its threshold
+
+## How it was built
+
+With AI agents, under the author's direction. Claude Code wrote most of the code,
+tests and docs; OpenAI Codex produced the rig, the conversion script and the animation
+module of the 3D fly (`web/fly/`). Commits from `30ebe9e` on carry a Co-Authored-By
+line; the two first commits don't, but were made the same way. Every measured number
+in these docs comes from running this code.
 
 ## Credits
 
