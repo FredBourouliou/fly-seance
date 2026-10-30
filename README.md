@@ -8,6 +8,8 @@ grooms the touch away, or it stays still. The medium then speaks for it.
 
 Everything runs on your own machine. No cloud model, no API key.
 
+![The simulated fly grooming its antennae after a feather is offered](docs/post/hero.gif)
+
 > The fly does not understand your question. What is real is how its simulated
 > body responds to the offering, computed from the wiring of an actual fly.
 > See [docs/SCIENCE.md](docs/SCIENCE.md).
