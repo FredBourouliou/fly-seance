@@ -23,8 +23,8 @@ is the medium; the fly's real wiring diagram decides what its body would do.
  └──────────────┘
         │
         ▼
- ┌──────────────┐  4. SPEAK         Gemma narrates in character, given ONLY the
- │ Gemma (local)│ ─────────────────► verdict and the measured numbers; the plain
+ ┌──────────────┐  4. SPEAK         Gemma narrates in character, given the
+ │ Gemma (local)│ ─────────────────► question, offering and verdict; the plain
  └──────────────┘                    "what actually happened" line is written by code
         │
         ▼
@@ -38,7 +38,7 @@ is the medium; the fly's real wiring diagram decides what its body would do.
 | Consecrate | Gemma | Turning a free-text question into a sensory offering is a language task. |
 | Channel | connectome | The arbitration between offerings (bitter suppresses feeding, touch triggers grooming) comes from real wiring, not from a prompt. |
 | Read | code | The verdict must be reproducible and auditable; a model must not "decide" what the fly did. |
-| Speak | Gemma | Voice and atmosphere; constrained to the verdict and numbers it is handed. |
+| Speak | Gemma | Voice and atmosphere; it gets the question, the offering and the verdict, and no firing rates. |
 
 The fly does not understand the question. What is real is the body's response to
 the offering, computed from the wiring of an actual fly. The write-up says so.

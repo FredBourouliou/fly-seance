@@ -46,7 +46,7 @@ off, which is as good an answer as any.
 3. **Read** — code, not the model, reads the motor response: MN9 fires → the fly
    feeds (*yes*); aBN1 and the antennal descending neurons fire → it grooms (*it
    brushes the question off*); neither → stillness (*no*).
-4. **Speak** — Gemma voices the answer, given only the verdict and the numbers.
+4. **Speak** — Gemma voices the answer, given the question, the offering and the verdict.
 
 Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 

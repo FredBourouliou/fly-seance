@@ -25,7 +25,7 @@
 The medium's choice of offering largely sets the outcome. What the connectome adds
 is the arbitration when offerings compete (nectar *and* bitter *and* a touch). Over 22
 recorded séances, the rule "the strongest offering wins" predicted 21 verdicts; the
-22nd was a three-way mix that only the wiring could settle.
+22nd was a three-way mix, where the simulation gave a verdict the rule did not.
 
 The Poisson input varies from trial to trial, but the five trials of a séance use
 fixed seeds (1 to 5), on purpose: the same offering always gives the same numbers, so
