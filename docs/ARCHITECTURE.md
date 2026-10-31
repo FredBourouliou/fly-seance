@@ -36,7 +36,7 @@ is the medium; the fly's real wiring diagram decides what its body would do.
 | Step | Who | Why not the other one |
 |------|-----|-----------------------|
 | Consecrate | Gemma | Turning a free-text question into a sensory offering is a language task. |
-| Channel | connectome | The arbitration between offerings (bitter suppresses feeding, touch triggers grooming) comes from real wiring, not from a prompt. |
+| Channel | connectome | What each offering drives (bitter suppresses feeding, touch triggers grooming) comes from real wiring, not from a prompt. When both voices fire, the read-out rule below picks one. |
 | Read | code | The verdict must be reproducible and auditable; a model must not "decide" what the fly did. |
 | Speak | Gemma | Voice and atmosphere; it gets the question, the offering and the verdict, and no firing rates. |
 
@@ -71,10 +71,10 @@ Each offering has its own rate (0–250 Hz); 0 means "not offered".
 
 Thresholds come from a calibration grid (`scripts/calibrate.py`: each offering alone at
 10–250 Hz, the breath behind the veil at the same rates, and nine mixtures, 3 seeds
-each, 99 trials). The model has no spontaneous activity, and each voice's rates fall
+each, 117 trials). The model has no spontaneous activity, and each voice's rates fall
 into two bands with an empty band between them: feed 6 → 15 Hz, groom 8 → 19 Hz. Each
 threshold is the middle of that band (10.5 Hz and 13.5 Hz); any value inside it gives
-the same verdict on all 99 trials. Groom is the
+the same verdict on all 117 trials. Groom is the
 strongest of aBN1, DN1 and DN2. When both voices cross their thresholds, the one
 furthest above its own threshold speaks; over k trials the majority voice wins, and a
 tie is stillness.

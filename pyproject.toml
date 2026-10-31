@@ -3,7 +3,7 @@ name = "fly-seance"
 version = "0.1.0"
 description = "A séance with a simulated fruit-fly brain: the FlyWire connectome answers, a local Gemma model is the medium."
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.13"
 license = { text = "MIT" }
 dependencies = [
     "brian2>=2.5",

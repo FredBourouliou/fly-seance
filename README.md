@@ -55,7 +55,7 @@ Details: [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md).
 ## Run it
 
 ```bash
-uv venv && uv pip install -e ".[dev]"
+uv venv && source .venv/bin/activate && uv pip install -e ".[dev]"
 python scripts/fetch_connectome.py     # ~90 MB, checksummed, into data/
 ollama pull gemma4:e4b-it-q4_K_M       # the medium
 python -m fly_seance.seance "Will my book be a success?"   # one séance in the terminal

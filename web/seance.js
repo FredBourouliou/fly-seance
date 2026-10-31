@@ -35,7 +35,7 @@ const K = 5;
 
 let fly = null;
 let source = null;
-let thresholds = { feed: 10.5, groom: 13 };
+let thresholds = { feed: 10.5, groom: 13.5 };
 let received = [];
 let verdictVoice = "still";
 
